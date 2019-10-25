@@ -1,6 +1,9 @@
-﻿enum ArchitectureTypeEnum
+﻿namespace StudioArchitektoniczne
 {
-    OBIEKT_MIESZKALNY,
-    OBIEKT_USLUGOWY,
-    OBIEKT_BIUROWY
+    enum ArchitectureTypeEnum
+    {
+        OBIEKT_MIESZKALNY,
+        OBIEKT_USLUGOWY,
+        OBIEKT_BIUROWY
+    }
 }
