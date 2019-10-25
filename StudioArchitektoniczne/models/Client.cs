@@ -23,9 +23,5 @@ namespace StudioArchitektoniczne
         public String phone { get; set; }
         public String companyName { get; set; }
 
-        public void demandProject()
-        {
-
-        }
     }
 }

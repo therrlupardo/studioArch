@@ -18,5 +18,10 @@ namespace StudioArchitektoniczne.models
             this.postcode = postcode;
             this.number = number;
         }
+
+        public override string ToString()
+        {
+            return $"{city} {street} {number}, {postcode}";
+        }
     }
 }
