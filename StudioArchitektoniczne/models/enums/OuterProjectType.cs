@@ -4,9 +4,9 @@
     {
         WODOCIĄGOWY,
         ELEKTRYCZNY,
-        GEODEZYJNY,
-        SZKLARSKI,
+        GRZEWCZY,
+        ALARMOWY,
         OGRODNICZY,
-        STOLARSKI,
+        PRZECIWGROMOWY,
     }
 }

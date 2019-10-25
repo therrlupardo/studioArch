@@ -6,17 +6,17 @@ namespace StudioArchitektoniczne
 {
     class Client
     {
-        public Client(uint id, NameEnum name, SurnameEnum surname, string email, string phone, string companyName)
+        public Client()
         {
-            this.id = id;
-            this.name = name;
-            this.surname = surname;
-            this.email = email;
-            this.phone = phone;
-            this.companyName = companyName;
+            this.id = Guid.NewGuid();
+            this.name = RandomValues.RandomEnumValue<NameEnum>();
+            this.surname = RandomValues.RandomEnumValue<SurnameEnum>();
+            this.email = RandomValues.RandomEmail();
+            this.phone = RandomValues.RandomPhoneNumber();
+            this.companyName = RandomValues.RandomCompanyName();
         }
 
-        public UInt32 id { get; set; }
+        public Guid id { get; }
         public NameEnum name { get; set; }
         public SurnameEnum surname { get; set; }
         public String email { get; set; }

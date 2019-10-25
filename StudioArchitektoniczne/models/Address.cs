@@ -9,9 +9,9 @@ namespace StudioArchitektoniczne.models
         public String city { get; set; }
         public String street { get; set; }
         public String postcode { get; set; }
-        public int number { get; set; }
+        public String number { get; set; }
 
-        public Address(String city, String street, String postcode, int number)
+        public Address(String city, String street, String postcode, String number)
         {
             this.city = city;
             this.street = street;

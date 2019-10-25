@@ -6,9 +6,9 @@ namespace StudioArchitektoniczne
 {
     class ProjectOverwatch
     {
-        public ProjectOverwatch(uint id, DateTime startDate, DateTime dateTime, double prize, uint constructionManagerId, uint architectId, uint projectId)
+        public ProjectOverwatch(DateTime startDate, DateTime dateTime, double prize, uint constructionManagerId, uint architectId, uint projectId)
         {
-            this.id = id;
+            this.id = Guid.NewGuid();
             this.startDate = startDate;
             this.dateTime = dateTime;
             this.prize = prize;
@@ -17,7 +17,7 @@ namespace StudioArchitektoniczne
             this.projectId = projectId;
         }
 
-        public UInt32 id { get; set; }
+        public Guid id { get; }
         public DateTime startDate { get; set; }
         public DateTime dateTime { get; set; }
         public Double prize { get; set; }

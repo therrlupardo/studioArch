@@ -6,9 +6,9 @@ namespace StudioArchitektoniczne
 {
     class Architect
     {
-        public Architect(uint id, string specialization, string name, string surname, DateTime birthDate, string phone, bool canOverwatch, uint contractId)
+        public Architect(string specialization, string name, string surname, DateTime birthDate, string phone, bool canOverwatch, uint contractId)
         {
-            this.id = id;
+            this.id = Guid.NewGuid();
             this.specialization = specialization;
             this.name = name;
             this.surname = surname;
@@ -18,7 +18,7 @@ namespace StudioArchitektoniczne
             this.contractId = contractId;
         }
 
-        public UInt32 id { get; set; }
+        public Guid id { get; }
         public String specialization { get; set; }
         public String name { get; set; }
         public String surname { get; set; }
