@@ -1,4 +1,6 @@
-﻿using System;
+﻿using StudioArchitektoniczne.models;
+using StudioArchitektoniczne.models.outer;
+using System;
 using System.Collections.Generic;
 
 namespace StudioArchitektoniczne
