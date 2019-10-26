@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace StudioArchitektoniczne
+namespace StudioArchitektoniczne.models.outer
 {
     class OuterProject
     {

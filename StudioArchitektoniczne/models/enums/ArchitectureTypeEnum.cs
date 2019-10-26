@@ -1,4 +1,4 @@
-﻿namespace StudioArchitektoniczne
+﻿namespace StudioArchitektoniczne.models.enums
 {
     enum ArchitectureTypeEnum
     {

@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using StudioArchitektoniczne.models.enums;
 
-namespace StudioArchitektoniczne
+namespace StudioArchitektoniczne.models
 {
     class Project
     {

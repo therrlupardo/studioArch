@@ -1,4 +1,4 @@
-﻿namespace StudioArchitektoniczne
+﻿namespace StudioArchitektoniczne.models.enums
 {
     enum NameEnum
     {
@@ -60,8 +60,6 @@
         BENEDYKT,
         LEONARD,
         OLIWIER,
-        OLIWIA,
-
-
+        OLIWIA
     }
 }
