@@ -7,32 +7,26 @@ namespace StudioArchitektoniczne.models
     {
         public Client()
         {
-
+            this.id = Guid.NewGuid();
+            this.name = RandomValues.RandomEnumValue<NameEnum>();
+            this.surname = RandomValues.RandomEnumValue<SurnameEnum>();
+            this.email = RandomValues.RandomEmail();
+            this.phone = RandomValues.RandomPhoneNumber();
+            this.companyName = RandomValues.RandomCompanyName();
         }
 
-        public Client(uint id)
-        {
+        public Client(Guid id) {
             this.id = id;
         }
 
-        public Client(uint id, String name, String surname, string email, string phone, string companyName)
-        {
-            this.id = id;
-            this.name = name;
-            this.surname = surname;
-            this.email = email;
-            this.phone = phone;
-            this.companyName = companyName;
-        }
-
-        public uint id { get; set; }
+        public Guid id { get; }
         public String name { get; set; }
         public String surname { get; set; }
         public String email { get; set; }
         public String phone { get; set; }
         public String companyName { get; set; }
 
-        public static Client GenerateRandomClient(uint id)
+        public static Client GenerateRandomClient(Guid id)
         {
             Client client = new Client(id);
             Boolean isCompany = (new Random().Next(2)).Equals(1);

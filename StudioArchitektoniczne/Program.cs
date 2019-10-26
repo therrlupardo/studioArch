@@ -22,11 +22,12 @@ namespace StudioArchitektoniczne
             number = Convert.ToInt32(Console.ReadLine());
             for (uint i = 0; i < number; i++)
             {
-                listOfClients.Add(Client.GenerateRandomClient(i));
+                listOfClients.Add(Client.GenerateRandomClient(Guid.NewGuid()));
             }
 
             listOfClients.ForEach(client => Console.WriteLine(client));
 
         }
     }
+
 }
