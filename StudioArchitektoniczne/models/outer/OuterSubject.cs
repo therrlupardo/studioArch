@@ -5,17 +5,17 @@ namespace StudioArchitektoniczne.models.outer
 {
     class OuterSubject
     {
-        public OuterSubject(uint id, NameEnum name, SurnameEnum surname, string phone)
+        public OuterSubject()
         {
-            this.id = id;
-            this.name = name;
-            this.surname = surname;
-            this.phone = phone;
+            this.id = Guid.NewGuid();
+            this.name = RandomValueGenerator.GetEnumRandomValue<NameEnum>().ToString();
+            this.surname = RandomValueGenerator.GetEnumRandomValue<SurnameEnum>().ToString();
+            this.phone = RandomValueGenerator.GetPhoneNumber();
         }
 
-        public UInt32 id { get; set; }
-        public NameEnum name { get; set; }
-        public SurnameEnum surname { get; set; }
+        public Guid id { get; set; }
+        public String name { get; set; }
+        public String surname { get; set; }
         public String phone { get; set; }
     }
 }

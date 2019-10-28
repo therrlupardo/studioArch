@@ -52,5 +52,12 @@ namespace StudioArchitektoniczne
             return value.ToString();
         }
 
+        public static DateTime GetRandomBirthDate()
+        {
+            DateTime start = new DateTime(1955, 1, 1);
+            DateTime end = new DateTime(1990, 12, 31);
+            return start.AddDays(new Random().Next((end - start).Days));
+        }
+
     }
 }

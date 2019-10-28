@@ -5,18 +5,24 @@ namespace StudioArchitektoniczne.models
 {
     class Project
     {
-        public Project(string address, ArchitectureTypeEnum architectureType, double prize, DateTime startDate, DateTime endDate, ProjectStatusEnum status, uint size, DateTime clientOrderDate, uint clientId)
+        public Project(DateTime clientOrderDate, Guid clientId)
         {
             this.id = Guid.NewGuid();
-            this.address = address;
-            this.architectureType = architectureType;
-            this.prize = prize;
-            this.startDate = startDate;
-            this.endDate = endDate;
-            this.status = status;
-            this.size = size;
+            this.address = new Address().ToString();
+            this.architectureType = RandomValueGenerator.GetEnumRandomValue<ArchitectureTypeEnum>();
+            this.startDate = new DateTime();
+            this.endDate = startDate.AddDays(new Random().Next(2000));
+            this.prize = Calculator.CalculateProjectCost(startDate, endDate, architectureType);
+            this.status = ProjectStatusEnum.PRZYJETO_DO_REALIZACJI;
+            this.size = (uint)(endDate-startDate).Days;
             this.clientOrderDate = clientOrderDate;
             this.clientId = clientId;
+        }
+
+        public override string ToString()
+        {
+            return $"{id};{address};{architectureType.ToString()};{startDate.ToShortDateString()};" +
+                $"{endDate.ToShortDateString()};{prize};{status.ToString()};{size};{clientOrderDate.ToShortDateString()};{clientId};";
         }
 
         public Guid id { get; }
@@ -28,7 +34,7 @@ namespace StudioArchitektoniczne.models
         public ProjectStatusEnum status { get; set; }
         public UInt32 size { get; set; }
         public DateTime clientOrderDate { get; set; }
-        public UInt32 clientId { get; set; }
+        public Guid clientId { get; set; }
 
     }
 }

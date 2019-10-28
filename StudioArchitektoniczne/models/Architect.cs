@@ -1,19 +1,20 @@
-﻿using System;
+﻿using StudioArchitektoniczne.models.enums;
+using System;
 
 namespace StudioArchitektoniczne.models
 {
     class Architect
     {
-        public Architect(string specialization, string name, string surname, DateTime birthDate, string phone, bool canOverwatch, uint contractId)
+        public Architect()
         {
             this.id = Guid.NewGuid();
-            this.specialization = specialization;
-            this.name = name;
-            this.surname = surname;
-            this.birthDate = birthDate;
-            this.phone = phone;
-            this.canOverwatch = canOverwatch;
-            this.contractId = contractId;
+            this.specialization = RandomValueGenerator.GetEnumRandomValue<ArchitectureTypeEnum>().ToString();
+            this.name = RandomValueGenerator.GetEnumRandomValue<NameEnum>().ToString();
+            this.surname = RandomValueGenerator.GetEnumRandomValue<SurnameEnum>().ToString();
+            this.birthDate = RandomValueGenerator.GetRandomBirthDate();
+            this.phone = RandomValueGenerator.GetPhoneNumber();
+            this.canOverwatch = new Random().Next() % 2 == 0;
+            this.contractId = (uint) new Random().Next();
         }
 
         public Guid id { get; }
@@ -28,6 +29,11 @@ namespace StudioArchitektoniczne.models
         private String GetCanOverwatchString()
         {
             return canOverwatch ? "TAK" : "NIE";
+        }
+
+        public override string ToString()
+        {
+            return $"{id};{specialization};{name};{surname};{birthDate};{phone};{GetCanOverwatchString()};{contractId}";
         }
     }
 }
