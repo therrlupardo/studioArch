@@ -10,13 +10,39 @@ namespace StudioArchitektoniczne
 
         static void Main(string[] args)
         {
-            List<Architect> listOfArchitects = new List<Architect>();
-            List<Client> listOfClients = new List<Client>();
-            List<Project> listOfProjects = new List<Project>();
-            List<ProjectOverwatch> listOfOverwatches = new List<ProjectOverwatch>();
-            List<OuterProject> listOfOuterProjects = new List<OuterProject>();
-            List<OuterSubject> listOfOuterSubjects = new List<OuterSubject>();
-            List<Address> listOfAdresses = new List<Address>();
+            Console.WriteLine("Witaj w generatorze danych do studia architektonicznego!");
+            Console.WriteLine("Zacznijmy do okresu t0-t1:");
+            Console.WriteLine("Ilu klientów ma zostać wygenerowanych?");
+            int t0clients = int.Parse(Console.ReadLine());
+            Console.WriteLine("Ilu architektów ma zostać wygenerowanych?");
+            int t0architects = int.Parse(Console.ReadLine());
+            Console.WriteLine("Ile projektów ma zostać wygenerowanych?");
+            int t0projects = int.Parse(Console.ReadLine());
+            Console.WriteLine("Ile nadzorów ma zostać wygenerowanych?");
+            int t0overwatches = int.Parse(Console.ReadLine());
+            Console.WriteLine("Ile zewnętrznych podmiotów ma zostać wygenerowanych?");
+            int t0outerSubjects = int.Parse(Console.ReadLine());
+            Console.WriteLine("Ile zewnętrznych projektów ma zostać wygenerowanych?");
+            int t0outerProjects = int.Parse(Console.ReadLine());
+            Console.WriteLine("=====================================");
+            Console.WriteLine("Przejdźmy do okresu t1-t2:");
+            Console.WriteLine("Ilu klientów ma zostać wygenerowanych?");
+            int t1clients = int.Parse(Console.ReadLine());
+            Console.WriteLine("Ilu architektów ma zostać wygenerowanych?");
+            int t1architects = int.Parse(Console.ReadLine());
+            Console.WriteLine("Ile projektów ma zostać wygenerowanych?");
+            int t1projects = int.Parse(Console.ReadLine());
+            Console.WriteLine("Ile nadzorów ma zostać wygenerowanych?");
+            int t1overwatches = int.Parse(Console.ReadLine());
+            Console.WriteLine("Ile zewnętrznych podmiotów ma zostać wygenerowanych?");
+            int t1outerSubjects = int.Parse(Console.ReadLine());
+            Console.WriteLine("Ile zewnętrznych projektów ma zostać wygenerowanych?");
+            int t1outerProjects = int.Parse(Console.ReadLine());
+            Console.WriteLine("====================================");
+            Console.WriteLine("Teraz zostaną wygenerowane dane. Proszę czekać");
+            Generator generator = new Generator(t0clients, t0architects, t0projects, t0overwatches, t0outerProjects, t0outerSubjects,
+                t1clients, t1architects, t1projects, t1overwatches, t1outerProjects, t1outerSubjects);
+            generator.GenerateData();
         }
     }
 

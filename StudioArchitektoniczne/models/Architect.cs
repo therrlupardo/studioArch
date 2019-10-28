@@ -10,7 +10,7 @@ namespace StudioArchitektoniczne.models
             this.id = Guid.NewGuid();
             this.specialization = RandomValueGenerator.GetEnumRandomValue<ArchitectureTypeEnum>().ToString();
             this.name = RandomValueGenerator.GetEnumRandomValue<NameEnum>().ToString();
-            this.surname = RandomValueGenerator.GetEnumRandomValue<NameEnum>().ToString();
+            this.surname = RandomValueGenerator.GetEnumRandomValue<SurnameEnum>().ToString();
             this.birthDate = RandomValueGenerator.GetRandomBirthDate();
             this.phone = RandomValueGenerator.GetPhoneNumber();
             this.canOverwatch = new Random().Next() % 2 == 0;

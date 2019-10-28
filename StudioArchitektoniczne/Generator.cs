@@ -7,11 +7,8 @@ namespace StudioArchitektoniczne
 {
     class Generator
     {
-        DateTime t0;
-        DateTime t1;
-        DateTime t2;
-        int t1RecordsNumber;
-        int t2RecordsNumber;
+        int t0clients, t0architects, t0projects, t0overwatches, t0outerProjects, t0outerSubjects;
+        int t1clients, t1architects, t1projects, t1overwatches, t1outerProjects, t1outerSubjects;
 
         List<Architect> listOfArchitects = new List<Architect>();
         List<Client> listOfClients = new List<Client>();
@@ -20,25 +17,36 @@ namespace StudioArchitektoniczne
         List<OuterProject> listOfOuterProjects = new List<OuterProject>();
         List<OuterSubject> listOfOuterSubjects = new List<OuterSubject>();
 
-        public Generator(DateTime t0, DateTime t1, DateTime t2, int t1RecordsNumber, int t2RecordsNumber)
+        public Generator(int t0clients, int t0architects, int t0projects, int t0overwatches, int t0outerProjects,
+            int t0outerSubjects, int t1clients, int t1architects, int t1projects,
+            int t1overwatches, int t1outerProjects, int t1outerSubjects)
         {
-            this.t0 = t0;
-            this.t1 = t1;
-            this.t2 = t2;
-            this.t1RecordsNumber = t1RecordsNumber;
-            this.t2RecordsNumber = t2RecordsNumber;
+            this.t0clients = t0clients;
+            this.t0architects = t0architects;
+            this.t0projects = t0projects;
+            this.t0overwatches = t0overwatches;
+            this.t0outerProjects = t0outerProjects;
+            this.t0outerSubjects = t0outerSubjects;
+            this.t1clients = t1clients;
+            this.t1architects = t1architects;
+            this.t1projects = t1projects;
+            this.t1overwatches = t1overwatches;
+            this.t1outerProjects = t1outerProjects;
+            this.t1outerSubjects = t1outerSubjects;
         }
 
         public void GenerateData()
         {
-            //InitGenerate();
-
+            GenerateT0InitData();
+            MutateT0Data();
+            GenerateT1InitData();
+            Console.WriteLine();
 
             // --- start t1
 
 
             //while .....
-            
+
             // client order date -> rand (t0, t1> 
 
             // project
@@ -62,27 +70,23 @@ namespace StudioArchitektoniczne
 
         }
 
-        private void InitGenerate()
+        private void GenerateT0InitData()
         {
-            // create Clients and Architects
-            Random rand = new Random();
+            for (int i = 0; i < t0clients; i++) listOfClients.Add(new Client());
+            for (int i = 0; i < t0architects; i++) listOfArchitects.Add(new Architect());
+            for (int i = 0; i < t0outerSubjects; i++) listOfOuterSubjects.Add(new OuterSubject());
+        }
 
-            for (int i = 0; i < t1RecordsNumber / 1000; i++)
-            { 
-                if (rand.Next(0, 1) < 0.65)
-                {
-                    //generate Client
-                }
+        private void MutateT0Data()
+        {
+            // todo: zmienić losowe dane na inne (tylko architekci mogą być zmienieni żeby to miało sens?)
+        }
 
-                if (rand.Next(0, 1) < 0.3)
-                {
-                    //generate Architect
-                }
-
-            }
-
-            //create OuterSubjects
-
+        private void GenerateT1InitData()
+        {
+            for (int i = 0; i < t1clients; i++) listOfClients.Add(new Client());
+            for (int i = 0; i < t1architects; i++) listOfArchitects.Add(new Architect());
+            for (int i = 0; i < t1outerSubjects; i++) listOfOuterSubjects.Add(new OuterSubject());
         }
 
     }
