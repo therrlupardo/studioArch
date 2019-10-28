@@ -16,17 +16,7 @@ namespace StudioArchitektoniczne
             List<ProjectOverwatch> listOfOverwatches = new List<ProjectOverwatch>();
             List<OuterProject> listOfOuterProjects = new List<OuterProject>();
             List<OuterSubject> listOfOuterSubjects = new List<OuterSubject>();
-
-            int number;
-            Console.WriteLine("Ilu klientów potrzeba?");
-            number = Convert.ToInt32(Console.ReadLine());
-            for (uint i = 0; i < number; i++)
-            {
-                listOfClients.Add(new Client());
-            }
-
-            listOfClients.ForEach(client => Console.WriteLine(client));
-            Console.WriteLine();
+            List<Address> listOfAdresses = new List<Address>();
         }
     }
 

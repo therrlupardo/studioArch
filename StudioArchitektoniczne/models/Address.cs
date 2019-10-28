@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StudioArchitektoniczne.models.enums;
+using System;
 
 namespace StudioArchitektoniczne.models
 {
@@ -9,12 +10,12 @@ namespace StudioArchitektoniczne.models
         public String postcode { get; set; }
         public String number { get; set; }
 
-        public Address(String city, String street, String postcode, String number)
+        public Address()
         {
-            this.city = city;
-            this.street = street;
-            this.postcode = postcode;
-            this.number = number;
+            this.city = RandomValueGenerator.GetEnumRandomValue<CityEnum>().ToString();
+            this.street = RandomValueGenerator.GetEnumRandomValue<StreetEnum>().ToString();
+            this.postcode = $"{new Random().Next(100)}-{new Random().Next(1000)}";
+            this.number = new Random().Next(100).ToString();
         }
 
         public override string ToString()
