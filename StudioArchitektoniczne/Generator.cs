@@ -10,6 +10,8 @@ namespace StudioArchitektoniczne
         int t0clients, t0architects, t0projects, t0overwatches, t0outerProjects, t0outerSubjects;
         int t1clients, t1architects, t1projects, t1overwatches, t1outerProjects, t1outerSubjects;
 
+        DateTime initDate = new DateTime(2010, 1, 1);
+
         List<Architect> listOfArchitects = new List<Architect>();
         List<Client> listOfClients = new List<Client>();
         List<Project> listOfProjects = new List<Project>();
@@ -37,7 +39,11 @@ namespace StudioArchitektoniczne
 
         public void GenerateData()
         {
+            var dateRange = (DateTime.Today - initDate).Days;
             GenerateT0InitData();
+            GenerateProjects(dateRange);
+
+            // t1 -> mutacja starych danych, generowanie nowych, 
             MutateT0Data();
             GenerateT1InitData();
             Console.WriteLine();
@@ -68,6 +74,17 @@ namespace StudioArchitektoniczne
             // --- end t1
 
 
+        }
+
+        private void GenerateProjects(int dateRange)
+        {
+            for (int i = 0; i < t0projects; i++)
+            {
+                DateTime clientOrderDate = this.initDate.AddDays(new Random().Next(dateRange));
+                Client client = listOfClients[new Random().Next(listOfClients.Count)];
+                Project project = new Project(clientOrderDate, client.id);
+                listOfProjects.Add(project);
+            }
         }
 
         private void GenerateT0InitData()

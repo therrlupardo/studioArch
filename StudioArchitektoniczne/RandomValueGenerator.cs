@@ -54,8 +54,8 @@ namespace StudioArchitektoniczne
 
         public static DateTime GetRandomBirthDate()
         {
-            DateTime start = new DateTime(1960, 1, 1);
-            DateTime end = new DateTime(1995, 12, 31);
+            DateTime start = new DateTime(1955, 1, 1);
+            DateTime end = new DateTime(1990, 12, 31);
             return start.AddDays(new Random().Next((end - start).Days));
         }
 
