@@ -8,7 +8,7 @@ namespace StudioArchitektoniczne.models
         public Architect()
         {
             this.id = Guid.NewGuid();
-            this.specialization = RandomValueGenerator.GetEnumRandomValue<ArchitectureTypeEnum>().ToString();
+            this.specialization = RandomValueGenerator.GetEnumRandomValue<ArchitectureTypeEnum>();
             this.name = RandomValueGenerator.GetEnumRandomValue<NameEnum>().ToString();
             this.surname = RandomValueGenerator.GetEnumRandomValue<SurnameEnum>().ToString();
             this.birthDate = RandomValueGenerator.GetRandomBirthDate();
@@ -18,7 +18,7 @@ namespace StudioArchitektoniczne.models
         }
 
         public Guid id { get; }
-        public String specialization { get; set; }
+        public ArchitectureTypeEnum specialization { get; set; }
         public String name { get; set; }
         public String surname { get; set; }
         public DateTime birthDate { get; set; }
