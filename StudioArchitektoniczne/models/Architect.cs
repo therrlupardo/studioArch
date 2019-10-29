@@ -5,26 +5,26 @@ namespace StudioArchitektoniczne.models
 {
     class Architect
     {
-        public Architect()
+        public Architect(int id)
         {
-            this.id = Guid.NewGuid();
-            this.specialization = RandomValueGenerator.GetEnumRandomValue<ArchitectureTypeEnum>();
-            this.name = RandomValueGenerator.GetEnumRandomValue<NameEnum>().ToString();
-            this.surname = RandomValueGenerator.GetEnumRandomValue<SurnameEnum>().ToString();
-            this.birthDate = RandomValueGenerator.GetRandomBirthDate();
-            this.phone = RandomValueGenerator.GetPhoneNumber();
-            this.canOverwatch = new Random().Next() % 2 == 0;
-            this.contractId = (uint) new Random().Next();
+            this.id = id;
+            specialization = RandomValueGenerator.GetEnumRandomValue<ArchitectureTypeEnum>();
+            name = RandomValueGenerator.GetEnumRandomValue<NameEnum>().ToString();
+            surname = RandomValueGenerator.GetEnumRandomValue<SurnameEnum>().ToString();
+            birthDate = RandomValueGenerator.GetRandomBirthDate();
+            phone = RandomValueGenerator.GetPhoneNumber();
+            canOverwatch = new Random().Next() % 2 == 0;
+            contractId =  new Random().Next();
         }
 
-        public Guid id { get; }
+        public int id { get; }
         public ArchitectureTypeEnum specialization { get; set; }
         public String name { get; set; }
         public String surname { get; set; }
         public DateTime birthDate { get; set; }
         public String phone { get; set; }
-        public Boolean canOverwatch { get; set; }
-        public UInt32 contractId { get; set; }
+        public bool canOverwatch { get; set; }
+        public int contractId { get; set; }
 
         private String GetCanOverwatchString()
         {

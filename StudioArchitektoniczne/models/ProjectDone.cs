@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace StudioArchitektoniczne.models
+﻿namespace StudioArchitektoniczne.models
 {
     class ProjectDone
     {
-        public Guid architectId { get; set; }
-        public Guid projectId { get; set; }
+        public int architectId { get; set; }
+        public int projectId { get; set; }
     }
 }
