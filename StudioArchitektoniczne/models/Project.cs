@@ -5,16 +5,16 @@ namespace StudioArchitektoniczne.models
 {
     class Project
     {
-        public Project(DateTime clientOrderDate, Guid clientId)
+        public Project(int id, DateTime clientOrderDate, int clientId)
         {
-            this.id = Guid.NewGuid();
-            this.address = new Address().ToString();
-            this.architectureType = RandomValueGenerator.GetEnumRandomValue<ArchitectureTypeEnum>();
-            this.startDate = new DateTime();
-            this.endDate = startDate.AddDays(new Random().Next(4000));
-            this.prize = Calculator.CalculateProjectCost(startDate, endDate, architectureType);
-            this.status = ProjectStatusEnum.PRZYJETO_DO_REALIZACJI;
-            this.size = (uint)(endDate-startDate).Days;
+            this.id = id;
+            address = new Address().ToString();
+            architectureType = RandomValueGenerator.GetEnumRandomValue<ArchitectureTypeEnum>();
+            startDate = new DateTime();
+            endDate = startDate.AddDays(new Random().Next(4000));
+            prize = Calculator.CalculateProjectCost(startDate, endDate, architectureType);
+            status = ProjectStatusEnum.PRZYJETO_DO_REALIZACJI;
+            size = (int)(endDate-startDate).Days;
             this.clientOrderDate = clientOrderDate;
             this.clientId = clientId;
         }
@@ -25,20 +25,20 @@ namespace StudioArchitektoniczne.models
                 $"{endDate.ToShortDateString()};{prize};{status.ToString()};{size};{clientOrderDate.ToShortDateString()};{clientId};";
         }
 
-        public Guid id { get; }
-        public String address { get; set; }
+        public int id { get; }
+        public string address { get; set; }
         public ArchitectureTypeEnum architectureType { get; set; }
-        public Double prize { get; set; }
+        public double prize { get; set; }
         public DateTime startDate { get; set; }
         public DateTime endDate { get; set; }
         public ProjectStatusEnum status { get; set; }
-        public UInt32 size { get; set; }
+        public int size { get; set; }
         public DateTime clientOrderDate { get; set; }
-        public Guid clientId { get; set; }
+        public int clientId { get; set; }
 
         public void updateSize()
         {
-            size = (uint)(endDate - startDate).Days;
+            size = (int)(endDate - startDate).Days;
         }
     }
 }

@@ -5,26 +5,22 @@ namespace StudioArchitektoniczne.models
 {
     class Client
     {
-        public Client()
+        public Client(int id)
         {
-            this.id = Guid.NewGuid();
-            this.name = RandomValueGenerator.GetEnumRandomValue<NameEnum>().ToString();
-            this.surname = RandomValueGenerator.GetEnumRandomValue<SurnameEnum>().ToString();
-            this.phone = RandomValueGenerator.GetPhoneNumber();
-            this.companyName = new Random().NextDouble() < 0.6 ? RandomValueGenerator.GetRandomCompanyName(this) : "";
-            this.email = RandomValueGenerator.GetRandomEmail(this);
-        }
-
-        public Client(Guid id) {
             this.id = id;
+            name = RandomValueGenerator.GetEnumRandomValue<NameEnum>().ToString();
+            surname = RandomValueGenerator.GetEnumRandomValue<SurnameEnum>().ToString();
+            phone = RandomValueGenerator.GetPhoneNumber();
+            companyName = new Random().NextDouble() < 0.6 ? RandomValueGenerator.GetRandomCompanyName(this) : "";
+            email = RandomValueGenerator.GetRandomEmail(this);
         }
 
-        public Guid id { get; }
-        public String name { get; set; }
-        public String surname { get; set; }
-        public String email { get; set; }
-        public String phone { get; set; }
-        public String companyName { get; set; }
+        public int id { get; }
+        public string name { get; set; }
+        public string surname { get; set; }
+        public string email { get; set; }
+        public string phone { get; set; }
+        public string companyName { get; set; }
 
         public override string ToString()
         {

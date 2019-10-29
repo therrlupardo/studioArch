@@ -28,7 +28,6 @@ namespace StudioArchitektoniczne
         List<Architect> availableOMA = new List<Architect>();
         List<Architect> availableOUA = new List<Architect>();
         List<Architect> availableOBA = new List<Architect>();
-        Dictionary<Guid, List<Guid>> architectOnProject = new Dictionary<Guid, List<Guid>>();
 
         public Generator(int t0clients, int t0architects, int t0projects, int t0overwatches, int t0outerProjects,
             int t0outerSubjects, int t1clients, int t1architects, int t1projects,
@@ -123,7 +122,6 @@ namespace StudioArchitektoniczne
             projects[id].endDate = currentDate.AddDays(rand.Next(10, 20));
             projects[id].updateSize();
 
-            List<Guid> archOnProject = new List<Guid>();
             for (int i = 0; i < neededArchitects; i++)
             {
                 ProjectDone pd = new ProjectDone();
@@ -131,9 +129,7 @@ namespace StudioArchitektoniczne
                 architects.Remove(architects.First());
                 pd.projectId = project.id;
                 listOfProjectsDone.Add(pd);
-                archOnProject.Add(pd.architectId);
             }
-            architectOnProject.Add(project.id, archOnProject);
 
             projects.RemoveAll(p => p.id == project.id);
             var overwatch = listOfOverwatches.Find(o => o.projectId == project.id);
@@ -144,7 +140,9 @@ namespace StudioArchitektoniczne
                 // znajdź wszystkie połączenia pomiędzy projektami dla wybranego projektu
                 var projectsDone = listOfProjectsDone.FindAll(pd => pd.projectId == project.id);
                 // znajdź wszystkich architektów, którzy pracowali w powyższym projekcie
-                var availableOverwatchers = listOfArchitects.FindAll(a => projectsDone.Find(pd => pd.architectId == a.id) != null);
+                List<Architect> availableOverwatchers = new List<Architect>();
+                projectsDone.ForEach(pd => availableOverwatchers.Add(listOfArchitects[pd.architectId]));
+                //var availableOverwatchers = listOfArchitects.FindAll(a => projectsDone.Find(pd => pd.architectId == a.id) != null);
                 if (availableOverwatchers.Any() && availableOverwatchers.Find(o => o.canOverwatch) != null)
                 {
                     var arch = availableOverwatchers.Find(o => o.canOverwatch);
@@ -183,29 +181,25 @@ namespace StudioArchitektoniczne
                             break;
                     }
                 });
-                // znajdź wszystkie powiązania dla projektów, które się kończą
-                var pds = listOfProjectsDone.FindAll(pd => endingProjects.Find(p => p.id == pd.projectId) != null);
-                // znajdź wszystkich architektów, którzy pracują przy kończących się projektach
-                archs = listOfArchitects.FindAll(a => pds.Find(pd => pd.architectId == a.id) != null);
-                // znajdź wszystkie nadzory, które opierają się na kończących się projektach
+                List<int> ids = new List<int>();
+                listOfProjectsDone.FindAll(pd => endingProjects.Find(p => p.id == pd.projectId) != null)
+                    .ForEach(pd => archs.Add(listOfArchitects[pd.architectId]));
                 var overwatch = listOfOverwatches.Find(o => endingProjects.Find(p => p.id == o.projectId) != null);
                 if (overwatch != null)
                 {
-                    // znajdź architekta, który prowadzi nadzór (jeśli był on członkiem zespołu projektowego)
                     var overwatcher = archs.Find(a => a.id == overwatch.architectId);
                     if (overwatcher != null)
                     {
-                        // usuń go z zespołu projektowego (reszta będzie przeniesiona do "wolnych" architektów)
                         archs.Remove(overwatcher);
                     }
                 }
             }
-            // znajdź wszystkie kończące się nadzory
-            var endingOverwatches = listOfOverwatches.FindAll(o => o.endDate <= currentDate && o.endDate >= currentDate.AddDays(-2));
+            var endingOverwatches = listOfOverwatches.FindAll(o => o.endDate <= currentDate && o.endDate >= currentDate.AddDays(-1));
             if (endingOverwatches.Any())
             {
-                // znajdź architektów, którzy prowadzą kończące się nadzory
-                archs.Concat(listOfArchitects.FindAll(a => endingOverwatches.Find(o => o.architectId == a.id) != null));
+                List<Architect> overwatchers = new List<Architect>();
+                endingOverwatches.ForEach(o => overwatchers.Add(listOfArchitects[o.architectId]));
+                archs.Concat(overwatchers);
             }
             archs.ForEach(a =>
             {
@@ -228,9 +222,9 @@ namespace StudioArchitektoniczne
         {
             for (int i = 0; i < t0projects; i++)
             {
-                DateTime clientOrderDate = this.initDate.AddDays(rand.Next(dateRange));
+                DateTime clientOrderDate = initDate.AddDays(rand.Next(dateRange));
                 Client client = listOfClients[rand.Next(listOfClients.Count)];
-                Project project = new Project(clientOrderDate, client.id);
+                Project project = new Project(i, clientOrderDate, client.id);
                 listOfProjects.Add(project);
                 switch (project.architectureType)
                 {
@@ -257,7 +251,7 @@ namespace StudioArchitektoniczne
                 OuterSubject manager = listOfOuterSubjects[rand.Next(listOfOuterSubjects.Count)];
                 Project project = listOfProjects[index];
                 index += delta;
-                ProjectOverwatch overwatch = new ProjectOverwatch(manager.id, Guid.Empty, project.id);
+                ProjectOverwatch overwatch = new ProjectOverwatch(i, manager.id, 0, project.id);
                 listOfOverwatches.Add(overwatch);
             }
 
@@ -265,7 +259,7 @@ namespace StudioArchitektoniczne
             {
                 Project project = listOfProjects[rand.Next(listOfProjects.Count)];
                 OuterSubject os = listOfOuterSubjects[rand.Next(listOfOuterSubjects.Count)];
-                listOfOuterProjects.Add(new OuterProject(os.id, project.id));
+                listOfOuterProjects.Add(new OuterProject(i, os.id, project.id));
             }
         }
 
@@ -276,12 +270,12 @@ namespace StudioArchitektoniczne
 
         private void GenerateT0InitData()
         {
-            for (int i = 0; i < t0clients; i++) listOfClients.Add(new Client());
-            for (int i = 0; i < t0architects; i++) listOfArchitects.Add(new Architect());
+            for (int i = 0; i < t0clients; i++) listOfClients.Add(new Client(i));
+            for (int i = 0; i < t0architects; i++) listOfArchitects.Add(new Architect(i));
             this.availableOBA = listOfArchitects.FindAll(a => a.specialization == ArchitectureTypeEnum.OBIEKT_BIUROWY);
             this.availableOMA = listOfArchitects.FindAll(a => a.specialization == ArchitectureTypeEnum.OBIEKT_MIESZKALNY);
             this.availableOUA = listOfArchitects.FindAll(a => a.specialization == ArchitectureTypeEnum.OBIEKT_USLUGOWY);
-            for (int i = 0; i < t0outerSubjects; i++) listOfOuterSubjects.Add(new OuterSubject());
+            for (int i = 0; i < t0outerSubjects; i++) listOfOuterSubjects.Add(new OuterSubject(i));
             Console.WriteLine();
         }
 
@@ -292,9 +286,9 @@ namespace StudioArchitektoniczne
 
         private void GenerateT1InitData()
         {
-            for (int i = 0; i < t1clients; i++) listOfClients.Add(new Client());
-            for (int i = 0; i < t1architects; i++) listOfArchitects.Add(new Architect());
-            for (int i = 0; i < t1outerSubjects; i++) listOfOuterSubjects.Add(new OuterSubject());
+            for (int i = t0clients; i < t0clients + t1clients; i++) listOfClients.Add(new Client(i));
+            for (int i = t0architects; i < t0architects + t1architects; i++) listOfArchitects.Add(new Architect(i));
+            for (int i = t0outerSubjects; i < t0outerSubjects + t1outerSubjects; i++) listOfOuterSubjects.Add(new OuterSubject(i));
         }
 
     }

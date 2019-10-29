@@ -5,15 +5,15 @@ namespace StudioArchitektoniczne.models.outer
 {
     class OuterProject
     {
-        public OuterProject(Guid subjectId, Guid projectId)
+        public OuterProject(int id, int subjectId, int projectId)
         {
-            this.id = Guid.NewGuid();
-            this.name = $"{projectType}-{new Random().Next(10000)}";
+            this.id = id;
+            name = $"{projectType}-{new Random().Next(10000)}";
             this.subjectId = subjectId;
-            this.projectType = RandomValueGenerator.GetEnumRandomValue<OuterProjectType>();
-            this.startDate = new DateTime();
-            this.endDate = startDate.AddDays(new Random().Next(2000));
-            this.prize = Calculator.CalculateOuterProjectCost(startDate, endDate, projectType);
+            projectType = RandomValueGenerator.GetEnumRandomValue<OuterProjectType>();
+            startDate = new DateTime();
+            endDate = startDate.AddDays(new Random().Next(2000));
+            prize = Calculator.CalculateOuterProjectCost(startDate, endDate, projectType);
             this.projectId = projectId;
         }
 
@@ -22,13 +22,13 @@ namespace StudioArchitektoniczne.models.outer
             return $"{id};{name};{subjectId};{projectType};{startDate.ToShortDateString()};{endDate.ToShortDateString()};{prize};{projectId}";
         }
 
-        public Guid id { get; set; }
-        public String name { get; set; }
-        public Guid subjectId { get; set; }
+        public int id { get; set; }
+        public string name { get; set; }
+        public int subjectId { get; set; }
         public OuterProjectType projectType { get; set; }
-        public Double prize { get; set; }
+        public double prize { get; set; }
         public DateTime startDate { get; set; }
         public DateTime endDate { get; set; }
-        public Guid projectId { get; set; }
+        public int projectId { get; set; }
     }
 }

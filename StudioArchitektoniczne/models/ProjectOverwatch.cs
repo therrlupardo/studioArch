@@ -4,23 +4,23 @@ namespace StudioArchitektoniczne.models
 {
     class ProjectOverwatch
     {
-        public ProjectOverwatch(Guid managerId, Guid architectId, Guid projectId)
+        public ProjectOverwatch(int id, int managerId, int architectId, int projectId)
         {
-            this.id = Guid.NewGuid();
-            this.startDate = new DateTime();
-            this.endDate = startDate.AddDays(new Random().Next(2000));
-            this.prize = Calculator.CalculateOverwatchCost(startDate, endDate);
-            this.constructionManagerId = managerId;
+            this.id = id;
+            startDate = new DateTime();
+            endDate = startDate.AddDays(new Random().Next(2000));
+            prize = Calculator.CalculateOverwatchCost(startDate, endDate);
+            constructionManagerId = managerId;
             this.architectId = architectId;
             this.projectId = projectId;
         }
 
-        public Guid id { get; }
+        public int id { get; }
         public DateTime startDate { get; set; }
         public DateTime endDate { get; set; }
-        public Double prize { get; set; }
-        public Guid constructionManagerId { get; set; }
-        public Guid architectId { get; set; }
-        public Guid projectId { get; set; }
+        public double prize { get; set; }
+        public int constructionManagerId { get; set; }
+        public int architectId { get; set; }
+        public int projectId { get; set; }
     }
 }
