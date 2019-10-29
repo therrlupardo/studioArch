@@ -52,12 +52,15 @@ namespace StudioArchitektoniczne
         {
             var dateRange = (DateTime.Today - initDate).Days;
             GenerateT0InitData();
-            GenerateProjectsAndOverwatches(dateRange);
+            GenerateProjectsAndOverwatches(dateRange, t0projects, t0overwatches, t0outerProjects);
             AssignArchitectsToProjects();
 
             // t1 -> mutacja starych danych, generowanie nowych, 
             MutateT0Data();
             GenerateT1InitData();
+            GenerateProjectsAndOverwatches(dateRange, t1projects, t1overwatches, t1outerProjects);
+            AssignArchitectsToProjects();
+
             Console.WriteLine();
 
             // --- start t1
@@ -218,9 +221,9 @@ namespace StudioArchitektoniczne
             });
         }
 
-        private void GenerateProjectsAndOverwatches(int dateRange)
+        private void GenerateProjectsAndOverwatches(int dateRange, int numberOfProjects, int numberOfOverwatches, int numberOfOuterProjects)
         {
-            for (int i = 0; i < t0projects; i++)
+            for (int i = 0; i < numberOfProjects; i++)
             {
                 DateTime clientOrderDate = initDate.AddDays(rand.Next(dateRange));
                 Client client = listOfClients[rand.Next(listOfClients.Count)];
@@ -244,9 +247,9 @@ namespace StudioArchitektoniczne
             projectsOM = OrderListByStatusAndClientOrderDate(projectsOM);
             projectsOU = OrderListByStatusAndClientOrderDate(projectsOU);
 
-            var delta = t0overwatches != 0 ? t0projects / t0overwatches : t0projects;
+            var delta = numberOfOverwatches != 0 ? numberOfProjects / numberOfOverwatches : numberOfProjects;
             int index = 0;
-            for (int i = 0; i < t0overwatches; i++)
+            for (int i = 0; i < numberOfOverwatches; i++)
             {
                 OuterSubject manager = listOfOuterSubjects[rand.Next(listOfOuterSubjects.Count)];
                 Project project = listOfProjects[index];
@@ -255,7 +258,7 @@ namespace StudioArchitektoniczne
                 listOfOverwatches.Add(overwatch);
             }
 
-            for (int i = 0; i < t0outerProjects; i++)
+            for (int i = 0; i < numberOfOuterProjects; i++)
             {
                 Project project = listOfProjects[rand.Next(listOfProjects.Count)];
                 OuterSubject os = listOfOuterSubjects[rand.Next(listOfOuterSubjects.Count)];
@@ -289,6 +292,12 @@ namespace StudioArchitektoniczne
             for (int i = t0clients; i < t0clients + t1clients; i++) listOfClients.Add(new Client(i));
             for (int i = t0architects; i < t0architects + t1architects; i++) listOfArchitects.Add(new Architect(i));
             for (int i = t0outerSubjects; i < t0outerSubjects + t1outerSubjects; i++) listOfOuterSubjects.Add(new OuterSubject(i));
+        }
+
+        public int CountGeneratedRecords()
+        {
+            return listOfArchitects.Count + listOfClients.Count + listOfOuterProjects.Count + listOfOuterSubjects.Count +
+                listOfOverwatches.Count + listOfProjects.Count + listOfProjectsDone.Count;
         }
 
     }

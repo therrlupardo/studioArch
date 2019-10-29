@@ -42,11 +42,12 @@ namespace StudioArchitektoniczne
             //Console.WriteLine("Teraz zostaną wygenerowane dane. Proszę czekać");
             //Generator generator = new Generator(t0clients, t0architects, t0projects, t0overwatches, t0outerProjects, t0outerSubjects,
             //    t1clients, t1architects, t1projects, t1overwatches, t1outerProjects, t1outerSubjects);
-            Generator generator = new Generator(100, 15000, 5000, 1000, 1000, 100, 0, 0, 0, 0, 0, 0);
+            Generator generator = new Generator(400, 60000, 20000, 4000, 4000, 400, 200, 30000, 10000, 2000, 2000, 200);
             DateTime begin = DateTime.Now;
             generator.GenerateData();
             var time = (DateTime.Now - begin);
-            Console.WriteLine($"Zakończono generowanie! Czas: ${time}");
+            Console.WriteLine($"Zakończono generowanie! Czas: {time}");
+            Console.WriteLine($"Wygenerowano {generator.CountGeneratedRecords()} rekordów");
             Console.WriteLine();
         }
     }
