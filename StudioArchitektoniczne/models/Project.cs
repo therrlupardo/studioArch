@@ -11,7 +11,7 @@ namespace StudioArchitektoniczne.models
             this.address = new Address().ToString();
             this.architectureType = RandomValueGenerator.GetEnumRandomValue<ArchitectureTypeEnum>();
             this.startDate = new DateTime();
-            this.endDate = startDate.AddDays(new Random().Next(2000));
+            this.endDate = startDate.AddDays(new Random().Next(4000));
             this.prize = Calculator.CalculateProjectCost(startDate, endDate, architectureType);
             this.status = ProjectStatusEnum.PRZYJETO_DO_REALIZACJI;
             this.size = (uint)(endDate-startDate).Days;
@@ -36,5 +36,9 @@ namespace StudioArchitektoniczne.models
         public DateTime clientOrderDate { get; set; }
         public Guid clientId { get; set; }
 
+        public void updateSize()
+        {
+            size = (uint)(endDate - startDate).Days;
+        }
     }
 }
