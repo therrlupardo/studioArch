@@ -50,45 +50,16 @@ namespace StudioArchitektoniczne
 
         public void GenerateData()
         {
-            var dateRange = (DateTime.Today - initDate).Days;
+            var dateRange = (DateTime.Today - initDate).Days/5;
             GenerateT0InitData();
-            GenerateProjectsAndOverwatches(dateRange, t0projects, t0overwatches, t0outerProjects);
+            GenerateProjectsAndOverwatches(dateRange, t0projects, t0overwatches, t0outerProjects, true);
             AssignArchitectsToProjects();
 
             // t1 -> mutacja starych danych, generowanie nowych, 
             MutateT0Data();
             GenerateT1InitData();
-            GenerateProjectsAndOverwatches(dateRange, t1projects, t1overwatches, t1outerProjects);
+            GenerateProjectsAndOverwatches(dateRange, t1projects, t1overwatches, t1outerProjects, false);
             AssignArchitectsToProjects();
-
-            Console.WriteLine();
-
-            // --- start t1
-
-
-            //while .....
-
-            // client order date -> rand (t0, t1> 
-
-            // project
-            //  rand   ->   client id    architect(s) id         
-
-            // projectoverwatch
-            //  rand   ->   start date   ( > project end date )
-
-            // outerprojects 
-            // if(rand ...)
-            //  rand         subject id  start date ( > project end date  &&  < overwatch start date)
-
-            // if(rand ...)
-            // create clients, architects, outer subjects ...
-
-            // end while
-
-
-            // --- end t1
-
-
         }
 
         private void AssignArchitectsToProjects()
@@ -108,7 +79,7 @@ namespace StudioArchitektoniczne
                         GenerateConnection(projectsOU, availableOUA);
                         break;
                 }
-                currentDate = currentDate.AddDays(rand.Next(2));
+                if (rand.Next(10) < 1) currentDate = currentDate.AddDays(rand.Next(2));
                 FreeArchitects();
             }
         }
@@ -140,12 +111,9 @@ namespace StudioArchitektoniczne
             {
                 overwatch.startDate = project.endDate;
                 overwatch.endDate = overwatch.startDate.AddDays(rand.Next(5, 10));
-                // znajdź wszystkie połączenia pomiędzy projektami dla wybranego projektu
                 var projectsDone = listOfProjectsDone.FindAll(pd => pd.projectId == project.id);
-                // znajdź wszystkich architektów, którzy pracowali w powyższym projekcie
                 List<Architect> availableOverwatchers = new List<Architect>();
                 projectsDone.ForEach(pd => availableOverwatchers.Add(listOfArchitects[pd.architectId]));
-                //var availableOverwatchers = listOfArchitects.FindAll(a => projectsDone.Find(pd => pd.architectId == a.id) != null);
                 if (availableOverwatchers.Any() && availableOverwatchers.Find(o => o.canOverwatch) != null)
                 {
                     var arch = availableOverwatchers.Find(o => o.canOverwatch);
@@ -221,13 +189,17 @@ namespace StudioArchitektoniczne
             });
         }
 
-        private void GenerateProjectsAndOverwatches(int dateRange, int numberOfProjects, int numberOfOverwatches, int numberOfOuterProjects)
+        private void GenerateProjectsAndOverwatches(int dateRange, int numberOfProjects, int numberOfOverwatches, int numberOfOuterProjects, bool isFirstGeneration)
         {
+            var shift = isFirstGeneration ? 0 : t0projects;
             for (int i = 0; i < numberOfProjects; i++)
             {
                 DateTime clientOrderDate = initDate.AddDays(rand.Next(dateRange));
                 Client client = listOfClients[rand.Next(listOfClients.Count)];
-                Project project = new Project(i, clientOrderDate, client.id);
+                Project project = new Project(
+                    i + shift,
+                    clientOrderDate, 
+                    client.id);
                 listOfProjects.Add(project);
                 switch (project.architectureType)
                 {
@@ -248,7 +220,7 @@ namespace StudioArchitektoniczne
             projectsOU = OrderListByStatusAndClientOrderDate(projectsOU);
 
             var delta = numberOfOverwatches != 0 ? numberOfProjects / numberOfOverwatches : numberOfProjects;
-            int index = 0;
+            int index = isFirstGeneration ? 0 : t0projects;
             for (int i = 0; i < numberOfOverwatches; i++)
             {
                 OuterSubject manager = listOfOuterSubjects[rand.Next(listOfOuterSubjects.Count)];
@@ -258,6 +230,7 @@ namespace StudioArchitektoniczne
                 listOfOverwatches.Add(overwatch);
             }
 
+            shift = isFirstGeneration ? 0 : t0outerProjects;
             for (int i = 0; i < numberOfOuterProjects; i++)
             {
                 Project project = listOfProjects[rand.Next(listOfProjects.Count)];
