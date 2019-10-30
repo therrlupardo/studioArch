@@ -3,7 +3,7 @@ using System;
 
 namespace StudioArchitektoniczne.models
 {
-    class Architect
+    class Architect : DataModel
     {
         public Architect(int id)
         {
@@ -31,9 +31,14 @@ namespace StudioArchitektoniczne.models
             return canOverwatch ? "TAK" : "NIE";
         }
 
-        public override string ToString()
+        public override string ToCsvString()
         {
-            return $"{id};{specialization};{name};{surname};{birthDate};{phone};{GetCanOverwatchString()};{contractId}";
+            return $"{id},{name},{surname},{birthDate},{phone},{contractId},{GetCanOverwatchString()},";
+        }
+
+        public override string ToBulkString()
+        {
+            return $"{id},{specialization}";
         }
     }
 }

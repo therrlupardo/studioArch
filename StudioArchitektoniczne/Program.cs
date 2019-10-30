@@ -44,6 +44,7 @@ namespace StudioArchitektoniczne
             //    t1clients, t1architects, t1projects, t1overwatches, t1outerProjects, t1outerSubjects);
             Generator generator = new Generator(400, 60000, 20000, 4000, 4000, 400, 200, 30000, 10000, 2000, 2000, 200);
             DateTime begin = DateTime.Now;
+
             generator.GenerateData();
             var time = (DateTime.Now - begin);
             Console.WriteLine($"Zakończono generowanie! Czas: {time}");

@@ -19,16 +19,10 @@ namespace StudioArchitektoniczne.models
             this.clientId = clientId;
         }
 
-        public override string ToString()
-        {
-            return $"{id};{address};{architectureType.ToString()};{startDate.ToShortDateString()};" +
-                $"{endDate.ToShortDateString()};{prize};{status.ToString()};{size};{clientOrderDate.ToShortDateString()};{clientId};";
-        }
-
         public int id { get; }
         public string address { get; set; }
         public ArchitectureTypeEnum architectureType { get; set; }
-        public double prize { get; set; }
+        public Decimal prize { get; set; }
         public DateTime startDate { get; set; }
         public DateTime endDate { get; set; }
         public ProjectStatusEnum status { get; set; }

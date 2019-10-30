@@ -20,7 +20,7 @@ namespace StudioArchitektoniczne.models
 
         public override string ToString()
         {
-            return $"{city} {street} {number}, {postcode}";
+            return $"{city}, {street} {number}, {postcode}";
         }
     }
 }

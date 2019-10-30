@@ -17,16 +17,11 @@ namespace StudioArchitektoniczne.models.outer
             this.projectId = projectId;
         }
 
-        public override string ToString()
-        {
-            return $"{id};{name};{subjectId};{projectType};{startDate.ToShortDateString()};{endDate.ToShortDateString()};{prize};{projectId}";
-        }
-
         public int id { get; set; }
         public string name { get; set; }
         public int subjectId { get; set; }
         public OuterProjectType projectType { get; set; }
-        public double prize { get; set; }
+        public Decimal prize { get; set; }
         public DateTime startDate { get; set; }
         public DateTime endDate { get; set; }
         public int projectId { get; set; }

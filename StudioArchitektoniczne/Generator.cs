@@ -3,7 +3,9 @@ using StudioArchitektoniczne.models.enums;
 using StudioArchitektoniczne.models.outer;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace StudioArchitektoniczne
 {
@@ -60,6 +62,36 @@ namespace StudioArchitektoniczne
             GenerateT1InitData();
             GenerateProjectsAndOverwatches(dateRange, t1projects, t1overwatches, t1outerProjects, false);
             AssignArchitectsToProjects();
+            Console.WriteLine();
+
+            // --- start t1
+
+
+            //while .....
+
+            // client order date -> rand (t0, t1> 
+
+            // project
+            //  rand   ->   client id    architect(s) id         
+
+            // projectoverwatch
+            //  rand   ->   start date   ( > project end date )
+
+            // outerprojects 
+            // if(rand ...)
+            //  rand         subject id  start date ( > project end date  &&  < overwatch start date)
+
+            // if(rand ...)
+            // create clients, architects, outer subjects ...
+
+            // end while
+
+            // --- end t1
+
+
+            // --- start t2
+
+            // --- end t2
         }
 
         private void AssignArchitectsToProjects()
@@ -271,6 +303,28 @@ namespace StudioArchitektoniczne
         {
             return listOfArchitects.Count + listOfClients.Count + listOfOuterProjects.Count + listOfOuterSubjects.Count +
                 listOfOverwatches.Count + listOfProjects.Count + listOfProjectsDone.Count;
+        }
+
+        private void CreateCsvHeaders()
+        {
+            File.WriteAllText("../../../data/outer_subjects.csv", "Identyfikator podmiotu,Imię,Nazwisko,Numer telefonu,\n", Encoding.UTF8);
+            File.WriteAllText("../../../data/outer_projects.csv", "Identyfikator projektu,Nazwa projektu,Identyfikator podmiotu,Rodzaj projektu,Koszt,Data rozpoczęcia,Data zakończenia,Identyfikator projektu architektonicznego,\n", Encoding.UTF8);
+            File.WriteAllText("../../../data/architects.csv", "Identyfikator pracownika,Imię,Nazwisko,Data urodzenia,Numer telefonu,Identyfikator kontraktu,Uprawnienia do nadzoru,\n", Encoding.UTF8);
+        }
+
+
+        private void WriteToCsv(List<DataModel> list, String filename)
+        {
+            var text = new StringBuilder();
+            for (int i = 0; i < list.Count; i++) text.AppendLine(list[i].ToCsvString());
+            File.AppendAllText(filename, text.ToString(), Encoding.UTF8);
+        }
+
+        private void WriteToBulkList(List<DataModel> list, String filename)
+        {
+            var text = new StringBuilder();
+            for (int i = 0; i < list.Count; i++) text.AppendLine(list[i].ToBulkString());
+            File.AppendAllText(filename, text.ToString(), Encoding.UTF8);
         }
 
     }

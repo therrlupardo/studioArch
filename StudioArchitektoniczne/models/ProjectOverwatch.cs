@@ -2,7 +2,7 @@
 
 namespace StudioArchitektoniczne.models
 {
-    class ProjectOverwatch
+    class ProjectOverwatch : DataModel
     {
         public ProjectOverwatch(int id, int managerId, int architectId, int projectId)
         {
@@ -18,9 +18,10 @@ namespace StudioArchitektoniczne.models
         public int id { get; }
         public DateTime startDate { get; set; }
         public DateTime endDate { get; set; }
-        public double prize { get; set; }
+        public Decimal prize { get; set; }
         public int constructionManagerId { get; set; }
         public int architectId { get; set; }
         public int projectId { get; set; }
+
     }
 }

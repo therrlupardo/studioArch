@@ -7,7 +7,7 @@ namespace StudioArchitektoniczne
 {
     static class Calculator
     {
-        public static Double CalculateProjectCost(DateTime start, DateTime end, ArchitectureTypeEnum type)
+        public static Decimal CalculateProjectCost(DateTime start, DateTime end, ArchitectureTypeEnum type)
         {
             var time = (end - start).Days;
             switch (type)
@@ -23,7 +23,7 @@ namespace StudioArchitektoniczne
             }
         }
 
-        public static Double CalculateOuterProjectCost(DateTime start, DateTime end, OuterProjectType type)
+        public static Decimal CalculateOuterProjectCost(DateTime start, DateTime end, OuterProjectType type)
         {
             var time = (end - start).Days;
             switch (type)
@@ -44,7 +44,7 @@ namespace StudioArchitektoniczne
             }
         }
 
-        public static Double CalculateOverwatchCost(DateTime start, DateTime end)
+        public static Decimal CalculateOverwatchCost(DateTime start, DateTime end)
         {
             return (end - start).Days * 1500;
         }
