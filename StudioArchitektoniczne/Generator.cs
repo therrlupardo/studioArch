@@ -12,7 +12,6 @@ namespace StudioArchitektoniczne
         int t0clients, t0architects, t0projects, t0overwatches, t0outerProjects, t0outerSubjects;
         int t1clients, t1architects, t1projects, t1overwatches, t1outerProjects, t1outerSubjects;
         Random rand;
-        DateTime initDate = new DateTime(2010, 1, 1);
         DateTime currentDate = new DateTime(2010, 1, 1);
 
         List<Architect> listOfArchitects = new List<Architect>();
@@ -22,9 +21,11 @@ namespace StudioArchitektoniczne
         List<OuterProject> listOfOuterProjects = new List<OuterProject>();
         List<OuterSubject> listOfOuterSubjects = new List<OuterSubject>();
         List<ProjectDone> listOfProjectsDone = new List<ProjectDone>();
+
         List<Project> projectsOM = new List<Project>();
         List<Project> projectsOU = new List<Project>();
         List<Project> projectsOB = new List<Project>();
+        
         List<Architect> availableOMA = new List<Architect>();
         List<Architect> availableOUA = new List<Architect>();
         List<Architect> availableOBA = new List<Architect>();
@@ -50,12 +51,12 @@ namespace StudioArchitektoniczne
 
         public void GenerateData()
         {
-            var dateRange = (DateTime.Today - initDate).Days/5;
+            var dateRange = (DateTime.Today - currentDate).Days/10;
             GenerateT0InitData();
             GenerateProjectsAndOverwatches(dateRange, t0projects, t0overwatches, t0outerProjects, true);
             AssignArchitectsToProjects();
 
-            // t1 -> mutacja starych danych, generowanie nowych, 
+            // t1 -> mutacja starych danych, generowanie nowych
             MutateT0Data();
             GenerateT1InitData();
             GenerateProjectsAndOverwatches(dateRange, t1projects, t1overwatches, t1outerProjects, false);
@@ -79,8 +80,11 @@ namespace StudioArchitektoniczne
                         GenerateConnection(projectsOU, availableOUA);
                         break;
                 }
-                if (rand.Next(10) < 1) currentDate = currentDate.AddDays(rand.Next(2));
-                FreeArchitects();
+                if (rand.Next(30) < 1)
+                {
+                    currentDate = currentDate.AddDays(1);
+                    FreeArchitects();
+                }
             }
         }
 
@@ -194,7 +198,7 @@ namespace StudioArchitektoniczne
             var shift = isFirstGeneration ? 0 : t0projects;
             for (int i = 0; i < numberOfProjects; i++)
             {
-                DateTime clientOrderDate = initDate.AddDays(rand.Next(dateRange));
+                DateTime clientOrderDate = currentDate.AddDays(rand.Next(dateRange));
                 Client client = listOfClients[rand.Next(listOfClients.Count)];
                 Project project = new Project(
                     i + shift,
