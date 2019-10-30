@@ -1,7 +1,4 @@
-﻿using StudioArchitektoniczne.models;
-using StudioArchitektoniczne.models.outer;
-using System;
-using System.Collections.Generic;
+﻿using System;
 
 namespace StudioArchitektoniczne
 {
@@ -10,7 +7,7 @@ namespace StudioArchitektoniczne
 
         static void Main(string[] args)
         {
-            Generator generator = Generator200k();
+            Generator generator = Generator1kk();
             DateTime begin = DateTime.Now;
             generator.GenerateData();
             var time = (DateTime.Now - begin);
@@ -57,12 +54,26 @@ namespace StudioArchitektoniczne
 
         private static Generator Generator100k()
         {
-            return new Generator(200, 30000, 10000, 2000, 2000, 200, 100, 15000, 5000, 1000, 1000, 100);
+            return new Generator(200, 30000, 10000, 2000, 2000, 200, 100, 15000, 10000, 1000, 1000, 100);
         }
 
         private static Generator Generator200k()
         {
             return new Generator(400, 60000, 20000, 4000, 4000, 400, 200, 30000, 10000, 2000, 2000, 200);
+        }
+
+        private static Generator Generator300k()
+        {
+            return new Generator(600, 90000, 30000, 6000, 6000, 600, 300, 45000, 15000, 3000, 3000, 300);
+        }
+
+        private static Generator Generator500k()
+        {
+            return new Generator(1000, 150000, 50000, 10000, 10000, 1000, 500, 75000, 25000, 5000, 5000, 500);
+        }
+        private static Generator Generator1kk()
+        {
+            return new Generator(2000, 300000, 100000, 20000, 20000, 2000, 1000, 150000, 100000, 10000, 10000, 1000);
         }
     }
 

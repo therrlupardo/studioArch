@@ -8,7 +8,7 @@ namespace StudioArchitektoniczne.models
         {
             this.id = id;
             startDate = new DateTime();
-            endDate = startDate.AddDays(new Random().Next(2000));
+            endDate = startDate.AddDays(new Random().Next(4000));
             prize = Calculator.CalculateOverwatchCost(startDate, endDate);
             constructionManagerId = managerId;
             this.architectId = architectId;
