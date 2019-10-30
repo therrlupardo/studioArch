@@ -1,7 +1,4 @@
-﻿using StudioArchitektoniczne.models;
-using StudioArchitektoniczne.models.outer;
-using System;
-using System.Collections.Generic;
+﻿using System;
 
 namespace StudioArchitektoniczne
 {
@@ -10,39 +7,7 @@ namespace StudioArchitektoniczne
 
         static void Main(string[] args)
         {
-            //Console.WriteLine("Witaj w generatorze danych do studia architektonicznego!");
-            //Console.WriteLine("Zacznijmy do okresu t0-t1:");
-            //Console.WriteLine("Ilu klientów ma zostać wygenerowanych?");
-            //int t0clients = int.Parse(Console.ReadLine());
-            //Console.WriteLine("Ilu architektów ma zostać wygenerowanych?");
-            //int t0architects = int.Parse(Console.ReadLine());
-            //Console.WriteLine("Ile projektów ma zostać wygenerowanych?");
-            //int t0projects = int.Parse(Console.ReadLine());
-            //Console.WriteLine("Ile nadzorów ma zostać wygenerowanych?");
-            //int t0overwatches = int.Parse(Console.ReadLine());
-            //Console.WriteLine("Ile zewnętrznych podmiotów ma zostać wygenerowanych?");
-            //int t0outerSubjects = int.Parse(Console.ReadLine());
-            //Console.WriteLine("Ile zewnętrznych projektów ma zostać wygenerowanych?");
-            //int t0outerProjects = int.Parse(Console.ReadLine());
-            //Console.WriteLine("=====================================");
-            //Console.WriteLine("Przejdźmy do okresu t1-t2:");
-            //Console.WriteLine("Ilu klientów ma zostać wygenerowanych?");
-            //int t1clients = int.Parse(Console.ReadLine());
-            //Console.WriteLine("Ilu architektów ma zostać wygenerowanych?");
-            //int t1architects = int.Parse(Console.ReadLine());
-            //Console.WriteLine("Ile projektów ma zostać wygenerowanych?");
-            //int t1projects = int.Parse(Console.ReadLine());
-            //Console.WriteLine("Ile nadzorów ma zostać wygenerowanych?");
-            //int t1overwatches = int.Parse(Console.ReadLine());
-            //Console.WriteLine("Ile zewnętrznych podmiotów ma zostać wygenerowanych?");
-            //int t1outerSubjects = int.Parse(Console.ReadLine());
-            //Console.WriteLine("Ile zewnętrznych projektów ma zostać wygenerowanych?");
-            //int t1outerProjects = int.Parse(Console.ReadLine());
-            //Console.WriteLine("====================================");
-            //Console.WriteLine("Teraz zostaną wygenerowane dane. Proszę czekać");
-            //Generator generator = new Generator(t0clients, t0architects, t0projects, t0overwatches, t0outerProjects, t0outerSubjects,
-            //    t1clients, t1architects, t1projects, t1overwatches, t1outerProjects, t1outerSubjects);
-            Generator generator = new Generator(400, 60000, 20000, 4000, 4000, 400, 200, 30000, 10000, 2000, 2000, 200);
+            Generator generator = Generator1kk();
             DateTime begin = DateTime.Now;
 
             generator.GenerateData();
@@ -50,6 +15,66 @@ namespace StudioArchitektoniczne
             Console.WriteLine($"Zakończono generowanie! Czas: {time}");
             Console.WriteLine($"Wygenerowano {generator.CountGeneratedRecords()} rekordów");
             Console.WriteLine();
+        }
+    
+        private static Generator CustomGenerator()
+        {
+            Console.WriteLine("Witaj w generatorze danych do studia architektonicznego!");
+            Console.WriteLine("Zacznijmy do okresu t0-t1:");
+            Console.WriteLine("Ilu klientów ma zostać wygenerowanych?");
+            int t0clients = int.Parse(Console.ReadLine());
+            Console.WriteLine("Ilu architektów ma zostać wygenerowanych?");
+            int t0architects = int.Parse(Console.ReadLine());
+            Console.WriteLine("Ile projektów ma zostać wygenerowanych?");
+            int t0projects = int.Parse(Console.ReadLine());
+            Console.WriteLine("Ile nadzorów ma zostać wygenerowanych?");
+            int t0overwatches = int.Parse(Console.ReadLine());
+            Console.WriteLine("Ile zewnętrznych podmiotów ma zostać wygenerowanych?");
+            int t0outerSubjects = int.Parse(Console.ReadLine());
+            Console.WriteLine("Ile zewnętrznych projektów ma zostać wygenerowanych?");
+            int t0outerProjects = int.Parse(Console.ReadLine());
+            Console.WriteLine("=====================================");
+            Console.WriteLine("Przejdźmy do okresu t1-t2:");
+            Console.WriteLine("Ilu klientów ma zostać wygenerowanych?");
+            int t1clients = int.Parse(Console.ReadLine());
+            Console.WriteLine("Ilu architektów ma zostać wygenerowanych?");
+            int t1architects = int.Parse(Console.ReadLine());
+            Console.WriteLine("Ile projektów ma zostać wygenerowanych?");
+            int t1projects = int.Parse(Console.ReadLine());
+            Console.WriteLine("Ile nadzorów ma zostać wygenerowanych?");
+            int t1overwatches = int.Parse(Console.ReadLine());
+            Console.WriteLine("Ile zewnętrznych podmiotów ma zostać wygenerowanych?");
+            int t1outerSubjects = int.Parse(Console.ReadLine());
+            Console.WriteLine("Ile zewnętrznych projektów ma zostać wygenerowanych?");
+            int t1outerProjects = int.Parse(Console.ReadLine());
+            Console.WriteLine("====================================");
+            Console.WriteLine("Teraz zostaną wygenerowane dane. Proszę czekać");
+            return new Generator(t0clients, t0architects, t0projects, t0overwatches, t0outerProjects, t0outerSubjects,
+                                 t1clients, t1architects, t1projects, t1overwatches, t1outerProjects, t1outerSubjects);
+        }
+
+        private static Generator Generator100k()
+        {
+            return new Generator(200, 30000, 10000, 2000, 2000, 200, 100, 15000, 10000, 1000, 1000, 100);
+        }
+
+        private static Generator Generator200k()
+        {
+            return new Generator(400, 60000, 20000, 4000, 4000, 400, 200, 30000, 10000, 2000, 2000, 200);
+        }
+
+        private static Generator Generator300k()
+        {
+            return new Generator(600, 90000, 30000, 6000, 6000, 600, 300, 45000, 15000, 3000, 3000, 300);
+        }
+
+        private static Generator Generator500k()
+        {
+            return new Generator(1000, 150000, 50000, 10000, 10000, 1000, 500, 75000, 25000, 5000, 5000, 500);
+        }
+        private static Generator Generator1kk()
+        {
+            return new Generator(2000, 300000, 100000, 20000, 20000, 2000, 1000, 150000, 100000, 10000, 10000, 1000);
         }
     }
 
