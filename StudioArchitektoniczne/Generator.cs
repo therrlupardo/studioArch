@@ -32,6 +32,8 @@ namespace StudioArchitektoniczne
         List<Architect> availableOUA = new List<Architect>();
         List<Architect> availableOBA = new List<Architect>();
 
+        List<string> listOfUpdates = new List<string>();
+
         public Generator(int t0clients, int t0architects, int t0projects, int t0overwatches, int t0outerProjects,
             int t0outerSubjects, int t1clients, int t1architects, int t1projects,
             int t1overwatches, int t1outerProjects, int t1outerSubjects)
@@ -57,14 +59,16 @@ namespace StudioArchitektoniczne
             GenerateSimpleDataT0();
             GenerateComplexData(dateRange, t0projects, t0overwatches, t0outerProjects, true);
             AssignArchitectsToProjects();
-
             WriteToFiles("t1");
 
             MutateData();
+            WriteUpdatesToFiles("t2");
 
             GenerateSimpleDataT1();
             GenerateComplexData(dateRange, t1projects, t1overwatches, t1outerProjects, false);
             AssignArchitectsToProjects();
+            WriteToFiles("t2");
+
             Console.WriteLine();
         }
         public int CountGeneratedRecords()
@@ -301,6 +305,7 @@ namespace StudioArchitektoniczne
                         break;
                 }
             });
+            CreateSpecializatonUpdates(architectsToMutate);
             AddArchitectsToSpecializedGroups(architectsToMutate);
         }
         private void MutateArchitectsCanOverwatch()
@@ -308,6 +313,7 @@ namespace StudioArchitektoniczne
             var toMutate = rand.Next((availableOBA.Count + availableOMA.Count + availableOUA.Count) / 10);
             var architectsToMutate = ChooseArchitectsToMutate(toMutate);
             architectsToMutate.ForEach(architect => architect.canOverwatch = !architect.canOverwatch);
+            CreateOverwatchUpdates(architectsToMutate);
         }
         private List<Architect> ChooseArchitectsToMutate(int toMutate)
         {
@@ -443,6 +449,28 @@ namespace StudioArchitektoniczne
             var text = new StringBuilder();
             for (int i = 0; i < list.Count; i++) text.AppendLine(((DataModel)list[i]).ToBulkString());
             File.AppendAllText(filename, text.ToString(), Encoding.GetEncoding("UTF-16"));
+        }
+
+        private void CreateOverwatchUpdates(List<Architect> architects)
+        {
+           
+        }
+
+        private void CreateSpecializatonUpdates(List<Architect> architects)
+        {
+            foreach (var architect in architects)
+            {
+                listOfUpdates.Add(String.Format("UPDATE Pracownicy SET Specjalizacja='{0}' WHERE ID={1}", architect.specialization.ToString(), architect.id));
+            }
+        }
+
+        private void WriteUpdatesToFiles(string time)
+        {
+            string path = "../../../data/";
+
+            var text = new StringBuilder();
+            foreach (var update in listOfUpdates) text.AppendLine(update.ToString());
+            File.AppendAllText(path + "architects_update_" + time + ".sql", text.ToString(), Encoding.GetEncoding("UTF-16"));
         }
     }
 }
