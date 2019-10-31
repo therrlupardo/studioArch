@@ -14,7 +14,10 @@ namespace StudioArchitektoniczne.models
             foreach (var prop in this.GetType().GetProperties())
             {
                 tmp = prop.GetValue(this).ToString();
-                CorrectIfDate(ref text);
+                if (prop.PropertyType == typeof(DateTime))
+                {
+                    tmp = tmp.Substring(0, tmp.Length - 9);
+                }
                 text = text + tmp + ",";
             }
             return text;
@@ -51,9 +54,6 @@ namespace StudioArchitektoniczne.models
                 }
                 text = text.Replace("/", "");
             }
-
-            // Regex regex = new Regex(@"^\d{1,2}\\/\d{1,2}\\/\d{4} \d{2}:\d{2}:\d{2}$"); 
-            // if(regex.IsMatch(text)) text = text.Substring(0, text.Length - 9);
         }
 
     }

@@ -113,6 +113,14 @@ namespace StudioArchitektoniczne
             projects[id].endDate = currentDate.AddDays(rand.Next(10, 20));
             projects[id].updateSize();
 
+            var outerProjects = listOfOuterProjects.FindAll(op => op.projectId == project.id);
+
+            foreach (var pr in outerProjects)
+            {
+                pr.startDate = currentDate.AddDays(rand.Next(0, 10));
+                pr.endDate = pr.startDate.AddDays(rand.Next(0, 10));
+            }
+
             for (int i = 0; i < neededArchitects; i++)
             {
                 ProjectDone pd = new ProjectDone();
