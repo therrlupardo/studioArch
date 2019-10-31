@@ -3,7 +3,7 @@ using System;
 
 namespace StudioArchitektoniczne.models.outer
 {
-    class OuterSubject
+    class OuterSubject : DataModel
     {
         public OuterSubject(int id)
         {

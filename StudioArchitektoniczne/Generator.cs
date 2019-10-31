@@ -52,10 +52,13 @@ namespace StudioArchitektoniczne
         }
         public void GenerateData()
         {
+
             var dateRange = (DateTime.Today - currentDate).Days / 10;
             GenerateSimpleDataT0();
             GenerateComplexData(dateRange, t0projects, t0overwatches, t0outerProjects, true);
             AssignArchitectsToProjects();
+
+            WriteToFiles("t1");
 
             MutateData();
 
@@ -63,35 +66,6 @@ namespace StudioArchitektoniczne
             GenerateComplexData(dateRange, t1projects, t1overwatches, t1outerProjects, false);
             AssignArchitectsToProjects();
             Console.WriteLine();
-
-            // --- start t1
-
-
-            //while .....
-
-            // client order date -> rand (t0, t1> 
-
-            // project
-            //  rand   ->   client id    architect(s) id         
-
-            // projectoverwatch
-            //  rand   ->   start date   ( > project end date )
-
-            // outerprojects 
-            // if(rand ...)
-            //  rand         subject id  start date ( > project end date  &&  < overwatch start date)
-
-            // if(rand ...)
-            // create clients, architects, outer subjects ...
-
-            // end while
-
-            // --- end t1
-
-
-            // --- start t2
-
-            // --- end t2
         }
         public int CountGeneratedRecords()
         {
@@ -409,26 +383,66 @@ namespace StudioArchitektoniczne
             return list;
         }
 
-        private void CreateCsvHeaders()
+        private void WriteToFiles(string time)
         {
-            File.WriteAllText("../../../data/outer_subjects.csv", "Identyfikator podmiotu,Imię,Nazwisko,Numer telefonu,\n", Encoding.UTF8);
-            File.WriteAllText("../../../data/outer_projects.csv", "Identyfikator projektu,Nazwa projektu,Identyfikator podmiotu,Rodzaj projektu,Koszt,Data rozpoczęcia,Data zakończenia,Identyfikator projektu architektonicznego,\n", Encoding.UTF8);
-            File.WriteAllText("../../../data/architects.csv", "Identyfikator pracownika,Imię,Nazwisko,Data urodzenia,Numer telefonu,Identyfikator kontraktu,Uprawnienia do nadzoru,\n", Encoding.UTF8);
+            string path = "../../../data/";
+
+            CreateCsvHeaders(path, time);
+
+            List<DataModel> tmp;
+            tmp = listOfArchitects.Cast<DataModel>().ToList();
+            WriteToCsv(tmp, path + "architects_" + time + ".csv");
+            tmp.Clear();
+
+            tmp = listOfOuterProjects.Cast<DataModel>().ToList();
+            WriteToCsv(tmp, path + "outer_projects_" + time + ".csv");
+            tmp.Clear();
+
+            tmp = listOfOuterSubjects.Cast<DataModel>().ToList();
+            WriteToCsv(tmp, path + "outer_subjects_" + time + ".csv");
+            tmp.Clear();
+
+            tmp = listOfArchitects.Cast<DataModel>().ToList();
+            WriteToBulk(tmp, path + "architects_" + time + ".bulk");
+            tmp.Clear();
+
+            tmp = listOfClients.Cast<DataModel>().ToList();
+            WriteToBulk(tmp, path + "clients_" + time + ".bulk");
+            tmp.Clear();
+
+            tmp = listOfProjects.Cast<DataModel>().ToList();
+            WriteToBulk(tmp, path + "projects_" + time + ".bulk");
+            tmp.Clear();
+
+            tmp = listOfProjectsDone.Cast<DataModel>().ToList();
+            WriteToBulk(tmp, path + "projects_done_" + time + ".bulk");
+            tmp.Clear();
+
+            tmp = listOfOverwatches.Cast<DataModel>().ToList();
+            WriteToBulk(tmp, path + "project_overwatches_" + time + ".bulk");
+            tmp.Clear();
+        }
+
+        private void CreateCsvHeaders(string path, string time)
+        {
+            File.WriteAllText(path + "outer_subjects_" + time + ".csv", "Identyfikator podmiotu,Imię,Nazwisko,Numer telefonu,\n", Encoding.UTF8);
+            File.WriteAllText(path + "outer_projects_" + time + ".csv", "Identyfikator projektu,Nazwa projektu,Identyfikator podmiotu,Rodzaj projektu,Koszt,Data rozpoczęcia,Data zakończenia,Identyfikator projektu architektonicznego,\n", Encoding.UTF8);
+            File.WriteAllText(path + "architects_" + time + ".csv", "Identyfikator pracownika,Imię,Nazwisko,Data urodzenia,Numer telefonu,Identyfikator kontraktu,Uprawnienia do nadzoru,\n", Encoding.UTF8);
         }
 
 
         private void WriteToCsv(List<DataModel> list, String filename)
         {
             var text = new StringBuilder();
-            for (int i = 0; i < list.Count; i++) text.AppendLine(list[i].ToCsvString());
+            for (int i = 0; i < list.Count; i++) text.AppendLine(((DataModel)list[i]).ToCsvString());
             File.AppendAllText(filename, text.ToString(), Encoding.UTF8);
         }
 
-        private void WriteToBulkList(List<DataModel> list, String filename)
+        private void WriteToBulk(List<DataModel> list, String filename)
         {
             var text = new StringBuilder();
-            for (int i = 0; i < list.Count; i++) text.AppendLine(list[i].ToBulkString());
-            File.AppendAllText(filename, text.ToString(), Encoding.UTF8);
+            for (int i = 0; i < list.Count; i++) text.AppendLine(((DataModel)list[i]).ToBulkString());
+            File.AppendAllText(filename, text.ToString(), Encoding.GetEncoding("UTF-16"));
         }
     }
 }

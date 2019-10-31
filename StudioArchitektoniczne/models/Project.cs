@@ -3,7 +3,7 @@ using StudioArchitektoniczne.models.enums;
 
 namespace StudioArchitektoniczne.models
 {
-    class Project
+    class Project : DataModel
     {
         public Project(int id, DateTime clientOrderDate, int clientId)
         {
@@ -23,11 +23,11 @@ namespace StudioArchitektoniczne.models
         public string address { get; set; }
         public ArchitectureTypeEnum architectureType { get; set; }
         public Decimal prize { get; set; }
+        public DateTime clientOrderDate { get; set; }
         public DateTime startDate { get; set; }
         public DateTime endDate { get; set; }
         public ProjectStatusEnum status { get; set; }
         public int size { get; set; }
-        public DateTime clientOrderDate { get; set; }
         public int clientId { get; set; }
 
         public void updateSize()

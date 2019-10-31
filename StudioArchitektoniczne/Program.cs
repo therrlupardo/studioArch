@@ -7,7 +7,7 @@ namespace StudioArchitektoniczne
 
         static void Main(string[] args)
         {
-            Generator generator = Generator1kk();
+            Generator generator = Generator100k();
             DateTime begin = DateTime.Now;
 
             generator.GenerateData();

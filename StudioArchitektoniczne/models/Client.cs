@@ -3,7 +3,7 @@ using System;
 
 namespace StudioArchitektoniczne.models
 {
-    class Client
+    class Client : DataModel
     {
         public Client(int id)
         {
@@ -19,7 +19,7 @@ namespace StudioArchitektoniczne.models
         public string name { get; set; }
         public string surname { get; set; }
         public string companyName { get; set; }
-        public string email { get; set; }
         public string phone { get; set; }
+        public string email { get; set; }
     }
 }

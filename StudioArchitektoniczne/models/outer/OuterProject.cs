@@ -3,7 +3,7 @@ using System;
 
 namespace StudioArchitektoniczne.models.outer
 {
-    class OuterProject
+    class OuterProject : DataModel
     {
         public OuterProject(int id, int subjectId, int projectId)
         {

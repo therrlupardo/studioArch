@@ -38,7 +38,7 @@ namespace StudioArchitektoniczne.models
 
         public override string ToBulkString()
         {
-            return $"{id},{specialization}";
+            return $"{id}|{specialization}";
         }
     }
 }
