@@ -1,4 +1,5 @@
 ﻿using System;
+using StudioArchitektoniczne.models.enums;
 
 namespace StudioArchitektoniczne.models
 {
@@ -22,6 +23,19 @@ namespace StudioArchitektoniczne.models
         public int constructionManagerId { get; set; }
         public int architectId { get; set; }
         public int projectId { get; set; }
+        public int endDelay { get; set; }
+        public int size { get; set; }
+        public LengthEnum length { get; set; }
 
+        public void updateLength()
+        {
+            endDelay = (endDate - startDate).Days;
+            size = endDelay * 8;
+            if (size <= 60) length = LengthEnum.BARDZO_KROTKI;
+            else if (size <= 120) length = LengthEnum.KROTKI;
+            else if (size <= 180) length = LengthEnum.SREDNI;
+            else if (size <= 240) length = LengthEnum.DLUGI;
+            else length = LengthEnum.BARDZO_DLUGI;
+        }
     }
 }

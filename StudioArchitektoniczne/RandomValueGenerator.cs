@@ -52,11 +52,17 @@ namespace StudioArchitektoniczne
             return value.ToString();
         }
 
-        public static DateTime GetRandomBirthDate()
+        public static String GetPesel()
         {
             DateTime start = new DateTime(1955, 1, 1);
             DateTime end = new DateTime(1990, 12, 31);
-            return start.AddDays(new Random().Next((end - start).Days));
+            DateTime birthDate = start.AddDays(new Random().Next((end - start).Days));
+            String randomNumers = "";
+            for (int i = 0; i < 5; i++)
+            {
+                randomNumers += new Random().Next(10).ToString();
+            }
+            return $"{birthDate.Year.ToString().Substring(2)}{birthDate.Month}{birthDate.Day}{randomNumers}";
         }
 
     }

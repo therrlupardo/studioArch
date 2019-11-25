@@ -215,14 +215,14 @@ namespace StudioArchitektoniczne
         private void GenerateSimpleDataT0()
         {
             for (int i = 0; i < t0clients; i++) listOfClients.Add(new Client(i));
-            for (int i = 0; i < t0architects; i++) listOfArchitects.Add(new Architect(i));
+            for (int i = 0; i < t0architects; i++) listOfArchitects.Add(new Architect(i, new DateTime()));
             for (int i = 0; i < t0outerSubjects; i++) listOfOuterSubjects.Add(new OuterSubject(i));
             ShuffleArchitects();
         }
         private void GenerateSimpleDataT1()
         {
             for (int i = t0clients; i < t0clients + t1clients; i++) listOfClients.Add(new Client(i));
-            for (int i = t0architects; i < t0architects + t1architects; i++) listOfArchitects.Add(new Architect(i));
+            for (int i = t0architects; i < t0architects + t1architects; i++) listOfArchitects.Add(new Architect(i, new DateTime()));
             for (int i = t0outerSubjects; i < t0outerSubjects + t1outerSubjects; i++) listOfOuterSubjects.Add(new OuterSubject(i));
             ShuffleArchitects();
         }
