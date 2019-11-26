@@ -16,6 +16,7 @@ namespace StudioArchitektoniczne.models
             this.dataWstawienia = dataWstawienia;
             this.dataWygasniecia = dataWygasniecia;
             active = true;
+            idPrzelozonego = -2; // -1 is top supervisor, -2 is none (initial value)
         }
 
         public int id { get; set; }
