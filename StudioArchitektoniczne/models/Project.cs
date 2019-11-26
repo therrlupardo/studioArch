@@ -52,5 +52,10 @@ namespace StudioArchitektoniczne.models
             else overwatchAccumulation = OverwatchAccumulation.DUZE;
 
         }
+
+        public override string ToBulkString()
+        {
+            return $"{id}|{size}|{prize}|{totalPrize}|{clientOrderDate.ToShortDateString()}|{startDate.ToShortDateString()}|{endDate.ToShortDateString()}|{clientId}";
+        }
     }
 }

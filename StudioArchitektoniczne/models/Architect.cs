@@ -37,12 +37,12 @@ namespace StudioArchitektoniczne.models
 
         public override string ToCsvString()
         {
-            return $"{id},{name},{surname},{pesel}, {idPrzelozonego}, {GetCanOverwatchString()},{dataWstawienia},{dataWygasniecia}";
+            return $"{id},{name},{surname},{pesel},{idPrzelozonego},{GetCanOverwatchString()},{dataWstawienia.ToShortDateString()},{dataWygasniecia.ToShortDateString()}";
         }
 
         public override string ToBulkString()
         {
-            return $"{id}|{specialization}";
+            return $"{id}|{specialization}|{idPrzelozonego}";
         }
 
         public Architect Copy()
