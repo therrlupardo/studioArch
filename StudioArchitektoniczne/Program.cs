@@ -8,13 +8,9 @@ namespace StudioArchitektoniczne
         static void Main(string[] args)
         {
             Generator generator = Generator100k();
-            DateTime begin = DateTime.Now;
-
             generator.GenerateData();
-            var time = (DateTime.Now - begin);
-            Console.WriteLine($"Zakończono generowanie! Czas: {time}");
-            Console.WriteLine($"Wygenerowano {generator.CountGeneratedRecords()} rekordów");
-            Console.WriteLine();
+            var counter = generator.CountGeneratedRecords();
+            return;
         }
     
         private static Generator CustomGenerator()

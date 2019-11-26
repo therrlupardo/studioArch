@@ -12,10 +12,10 @@ namespace StudioArchitektoniczne.models
 
         public Address()
         {
-            this.city = RandomValueGenerator.GetEnumRandomValue<CityEnum>().ToString();
-            this.street = RandomValueGenerator.GetEnumRandomValue<StreetEnum>().ToString();
-            this.postcode = $"{new Random().Next(100)}-{new Random().Next(1000)}";
-            this.number = new Random().Next(100).ToString();
+            city = RandomValueGenerator.GetEnumRandomValue<CityEnum>().ToString();
+            street = RandomValueGenerator.GetEnumRandomValue<StreetEnum>().ToString();
+            postcode = $"{new Random().Next(100)}-{new Random().Next(1000)}";
+            number = new Random().Next(100).ToString();
         }
 
         public override string ToString()
