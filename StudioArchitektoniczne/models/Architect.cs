@@ -15,9 +15,10 @@ namespace StudioArchitektoniczne.models
             pesel = RandomValueGenerator.GetPesel();
             this.dataWstawienia = dataWstawienia;
             this.dataWygasniecia = dataWygasniecia;
+            active = true;
         }
 
-        public int id { get; }
+        public int id { get; set; }
         public ArchitectureTypeEnum specialization { get; set; }
         public String name { get; set; }
         public String surname { get; set; }
@@ -26,6 +27,7 @@ namespace StudioArchitektoniczne.models
         public int idPrzelozonego { get; set; }
         public DateTime dataWstawienia { get; set; }
         public DateTime dataWygasniecia { get; set; }
+        public Boolean active { get; set; }
 
         private String GetCanOverwatchString()
         {
@@ -40,6 +42,22 @@ namespace StudioArchitektoniczne.models
         public override string ToBulkString()
         {
             return $"{id}|{specialization}";
+        }
+
+        public Architect Copy()
+        {
+            Architect architect = new Architect(id, dataWstawienia, dataWygasniecia);
+            architect.id = id;
+            architect.active = active;
+            architect.dataWstawienia = dataWstawienia;
+            architect.dataWygasniecia = dataWygasniecia;
+            architect.canOverwatch = canOverwatch;
+            architect.idPrzelozonego = idPrzelozonego;
+            architect.name = name;
+            architect.pesel = pesel;
+            architect.specialization = specialization;
+            architect.surname = surname;
+            return architect;
         }
     }
 }

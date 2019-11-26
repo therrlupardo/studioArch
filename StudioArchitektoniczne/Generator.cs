@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace StudioArchitektoniczne
 {
@@ -15,7 +16,7 @@ namespace StudioArchitektoniczne
         int t1clients, t1architects, t1projects, t1overwatches, t1outerProjects, t1outerSubjects;
         Random rand;
         DateTime currentDate = new DateTime(2010, 1, 1);
-
+        private int overwatches = 0;
         List<Architect> listOfArchitects = new List<Architect>();
         List<Client> listOfClients = new List<Client>();
         List<Project> listOfProjects = new List<Project>();
@@ -31,6 +32,8 @@ namespace StudioArchitektoniczne
         List<Architect> availableOMA = new List<Architect>();
         List<Architect> availableOUA = new List<Architect>();
         List<Architect> availableOBA = new List<Architect>();
+
+        Dictionary<int, int> mutatedArchitectsIdMapper = new Dictionary<int, int>();
 
         List<string> listOfUpdates = new List<string>();
 
@@ -69,7 +72,7 @@ namespace StudioArchitektoniczne
             AssignArchitectsToProjects();
             WriteToFiles("t2");
 
-            Console.WriteLine();
+            return;
         }
         public int CountGeneratedRecords()
         {
@@ -111,7 +114,7 @@ namespace StudioArchitektoniczne
             var id = projects.FindIndex(p => p.id == project.id);
             projects[id].startDate = currentDate;
             projects[id].endDate = currentDate.AddDays(rand.Next(10, 20));
-            projects[id].updateSize();
+            projects[id].updateSize(overwatches);
 
             var outerProjects = listOfOuterProjects.FindAll(op => op.projectId == project.id);
 
@@ -134,11 +137,19 @@ namespace StudioArchitektoniczne
             var overwatch = listOfOverwatches.Find(o => o.projectId == project.id);
             if (overwatch != null)
             {
+                overwatches++;
                 overwatch.startDate = project.endDate;
                 overwatch.endDate = overwatch.startDate.AddDays(rand.Next(5, 10));
                 var projectsDone = listOfProjectsDone.FindAll(pd => pd.projectId == project.id);
                 List<Architect> availableOverwatchers = new List<Architect>();
-                projectsDone.ForEach(pd => availableOverwatchers.Add(listOfArchitects[pd.architectId]));
+                
+                projectsDone.ForEach(pd =>
+                {
+                    var architect = listOfArchitects[pd.architectId].active
+                        ? listOfArchitects[pd.architectId]
+                        : listOfArchitects[mutatedArchitectsIdMapper.GetValueOrDefault(pd.architectId)];
+                    availableOverwatchers.Add(architect);
+                });
                 if (availableOverwatchers.Any() && availableOverwatchers.Find(o => o.canOverwatch) != null)
                 {
                     var arch = availableOverwatchers.Find(o => o.canOverwatch);
@@ -178,7 +189,13 @@ namespace StudioArchitektoniczne
                 });
                 List<int> ids = new List<int>();
                 listOfProjectsDone.FindAll(pd => endingProjects.Find(p => p.id == pd.projectId) != null)
-                    .ForEach(pd => archs.Add(listOfArchitects[pd.architectId]));
+                    .ForEach(pd =>
+                    {
+                        var architect = listOfArchitects[pd.architectId].active
+                            ? listOfArchitects[pd.architectId]
+                            : listOfArchitects[mutatedArchitectsIdMapper.GetValueOrDefault(pd.architectId)];
+                        archs.Add(architect);
+                    });
                 var overwatch = listOfOverwatches.Find(o => endingProjects.Find(p => p.id == o.projectId) != null);
                 if (overwatch != null)
                 {
@@ -186,6 +203,7 @@ namespace StudioArchitektoniczne
                     if (overwatcher != null)
                     {
                         archs.Remove(overwatcher);
+                        overwatches--;
                     }
                 }
             }
@@ -193,7 +211,13 @@ namespace StudioArchitektoniczne
             if (endingOverwatches.Any())
             {
                 List<Architect> overwatchers = new List<Architect>();
-                endingOverwatches.ForEach(o => overwatchers.Add(listOfArchitects[o.architectId]));
+                endingOverwatches.ForEach(o =>
+                {
+                    var architect = listOfArchitects[o.architectId].active
+                        ? listOfArchitects[o.architectId]
+                        : listOfArchitects[mutatedArchitectsIdMapper.GetValueOrDefault(o.architectId)];
+                    overwatchers.Add(architect);
+                });
                 archs.Concat(overwatchers);
             }
             archs.ForEach(a =>
@@ -215,14 +239,14 @@ namespace StudioArchitektoniczne
         private void GenerateSimpleDataT0()
         {
             for (int i = 0; i < t0clients; i++) listOfClients.Add(new Client(i));
-            for (int i = 0; i < t0architects; i++) listOfArchitects.Add(new Architect(i, new DateTime()));
+            for (int i = 0; i < t0architects; i++) listOfArchitects.Add(new Architect(i, currentDate, new DateTime(2999,12,31)));
             for (int i = 0; i < t0outerSubjects; i++) listOfOuterSubjects.Add(new OuterSubject(i));
             ShuffleArchitects();
         }
         private void GenerateSimpleDataT1()
         {
             for (int i = t0clients; i < t0clients + t1clients; i++) listOfClients.Add(new Client(i));
-            for (int i = t0architects; i < t0architects + t1architects; i++) listOfArchitects.Add(new Architect(i, new DateTime()));
+            for (int i = t0architects; i < t0architects + t1architects; i++) listOfArchitects.Add(new Architect(i, currentDate, new DateTime(2999,12,31)));
             for (int i = t0outerSubjects; i < t0outerSubjects + t1outerSubjects; i++) listOfOuterSubjects.Add(new OuterSubject(i));
             ShuffleArchitects();
         }
@@ -271,6 +295,8 @@ namespace StudioArchitektoniczne
                 Project project = listOfProjects[index];
                 index += delta;
                 ProjectOverwatch overwatch = new ProjectOverwatch(i, manager.id, 0, project.id);
+                project.totalPrize = project.prize + overwatch.prize;
+                project.isOverwatched = true;
                 listOfOverwatches.Add(overwatch);
             }
         }
@@ -297,31 +323,53 @@ namespace StudioArchitektoniczne
         {
             var toMutate = rand.Next((availableOBA.Count + availableOMA.Count + availableOUA.Count) / 2);
             List<Architect> architectsToMutate = ChooseArchitectsToMutate(toMutate);
+            List<Architect> mutatedArchitects = new List<Architect>();
             // zmień specjalizacje wybranym architektom
             architectsToMutate.ForEach(architect =>
             {
-                switch (architect.specialization)
+                Architect mutatedArchitect = architect.Copy();
+                architect.active = false;
+                architect.dataWygasniecia = currentDate;
+                mutatedArchitect.dataWstawienia = currentDate;
+                switch (mutatedArchitect.specialization)
                 {
                     case ArchitectureTypeEnum.OBIEKT_BIUROWY:
-                        architect.specialization = rand.Next(2) == 0 ? ArchitectureTypeEnum.OBIEKT_MIESZKALNY : ArchitectureTypeEnum.OBIEKT_USLUGOWY;
+                        mutatedArchitect.specialization = rand.Next(2) == 0 ? ArchitectureTypeEnum.OBIEKT_MIESZKALNY : ArchitectureTypeEnum.OBIEKT_USLUGOWY;
                         break;
                     case ArchitectureTypeEnum.OBIEKT_MIESZKALNY:
-                        architect.specialization = rand.Next(2) == 0 ? ArchitectureTypeEnum.OBIEKT_BIUROWY : ArchitectureTypeEnum.OBIEKT_USLUGOWY;
+                        mutatedArchitect.specialization = rand.Next(2) == 0 ? ArchitectureTypeEnum.OBIEKT_BIUROWY : ArchitectureTypeEnum.OBIEKT_USLUGOWY;
                         break;
                     case ArchitectureTypeEnum.OBIEKT_USLUGOWY:
-                        architect.specialization = rand.Next(2) == 0 ? ArchitectureTypeEnum.OBIEKT_MIESZKALNY : ArchitectureTypeEnum.OBIEKT_BIUROWY;
+                        mutatedArchitect.specialization = rand.Next(2) == 0 ? ArchitectureTypeEnum.OBIEKT_MIESZKALNY : ArchitectureTypeEnum.OBIEKT_BIUROWY;
                         break;
                 }
+
+                mutatedArchitect.id = listOfArchitects.Count();
+                listOfArchitects.Add(mutatedArchitect);
+                mutatedArchitects.Add(mutatedArchitect);
+                mutatedArchitectsIdMapper.Add(architect.id, mutatedArchitect.id);
             });
-            CreateSpecializatonUpdates(architectsToMutate);
-            AddArchitectsToSpecializedGroups(architectsToMutate);
+            CreateSpecializatonUpdates(mutatedArchitects);
+            AddArchitectsToSpecializedGroups(mutatedArchitects);
         }
         private void MutateArchitectsCanOverwatch()
         {
             var toMutate = rand.Next((availableOBA.Count + availableOMA.Count + availableOUA.Count) / 10);
             var architectsToMutate = ChooseArchitectsToMutate(toMutate);
-            architectsToMutate.ForEach(architect => architect.canOverwatch = !architect.canOverwatch);
-            CreateOverwatchUpdates(architectsToMutate);
+            var mutatedArchitects = new List<Architect>();
+            architectsToMutate.ForEach(architect =>
+            {
+                var mutatedArchitect = architect.Copy();
+                architect.active = false;
+                architect.dataWygasniecia = currentDate;
+                mutatedArchitect.canOverwatch = !mutatedArchitect.canOverwatch;
+                mutatedArchitect.dataWstawienia = currentDate;
+                mutatedArchitect.id = listOfArchitects.Count();
+                mutatedArchitects.Add(mutatedArchitect);
+                listOfArchitects.Add(mutatedArchitect);
+                mutatedArchitectsIdMapper.Add(architect.id, mutatedArchitect.id);
+            });
+            CreateOverwatchUpdates(mutatedArchitects);
         }
         private List<Architect> ChooseArchitectsToMutate(int toMutate)
         {
