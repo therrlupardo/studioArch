@@ -538,7 +538,7 @@ namespace StudioArchitektoniczne
         {
             foreach (var architect in architects)
             {
-                listOfUpdates.Add(String.Format("UPDATE Pracownicy SET Specjalizacja='{0}' WHERE ID={1}", architect.specialization.ToString(), architect.id));
+                listOfUpdates.Add(String.Format("UPDATE Pracownicy SET Specjalizacja='{0}' WHERE ID_PRACOWNIK={1}", architect.specialization.ToString(), architect.id));
             }
         }
 
