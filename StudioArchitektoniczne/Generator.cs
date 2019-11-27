@@ -510,7 +510,7 @@ namespace StudioArchitektoniczne
         {
             File.WriteAllText(path + "outer_subjects_" + time + ".csv", "Identyfikator podmiotu,Imię,Nazwisko,Numer telefonu,\n", Encoding.UTF8);
             File.WriteAllText(path + "outer_projects_" + time + ".csv", "Identyfikator projektu,Nazwa projektu,Identyfikator podmiotu,Rodzaj projektu,Koszt,Data rozpoczęcia,Data zakończenia,Identyfikator projektu architektonicznego,\n", Encoding.UTF8);
-            File.WriteAllText(path + "architects_" + time + ".csv", "Identyfikator pracownika,Imię,Nazwisko,Pesel,Identyfikator przełożonego,Uprawnienia do nadzoru,Data wstawienia, Data wygaśnięcia\n", Encoding.UTF8);
+            File.WriteAllText(path + "architects_" + time + ".csv", "Identyfikator pracownika,Imię,Nazwisko,Data urodzenia,Telefon,Identyfikator kontraktu,Uprawnienia do nadzoru,Pesel\n", Encoding.UTF8);
         }
 
 
