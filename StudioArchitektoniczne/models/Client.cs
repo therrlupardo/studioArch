@@ -23,5 +23,10 @@ namespace StudioArchitektoniczne.models
         public ClientTypeEnum clientType { get; set; }
 //        public string phone { get; set; }
 //        public string email { get; set; }
+
+        public override string ToBulkString()
+        {
+            return $"{id}|{companyName}|{name}|{surname}|{clientType}";
+        }
     }
 }

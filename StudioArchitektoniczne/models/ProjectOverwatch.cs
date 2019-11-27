@@ -9,7 +9,7 @@ namespace StudioArchitektoniczne.models
         {
             this.id = id;
             startDate = new DateTime();
-            endDate = startDate.AddDays(new Random().Next(4000));
+            endDate = startDate.AddDays(new Random().Next(300));
             prize = Calculator.CalculateOverwatchCost(startDate, endDate);
             constructionManagerId = managerId;
             this.architectId = architectId;
@@ -36,6 +36,11 @@ namespace StudioArchitektoniczne.models
             else if (size <= 180) length = LengthEnum.SREDNI;
             else if (size <= 240) length = LengthEnum.DLUGI;
             else length = LengthEnum.BARDZO_DLUGI;
+        }
+
+        public override string ToBulkString()
+        {
+            return $"{id}|{size}|{prize}|{startDate.ToShortDateString()}|{endDate.ToShortDateString()}|{architectId}|{constructionManagerId}|{projectId}";
         }
     }
 }

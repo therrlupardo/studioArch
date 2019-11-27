@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 
@@ -34,7 +35,7 @@ namespace StudioArchitektoniczne
         List<Architect> availableOBA = new List<Architect>();
 
         Dictionary<int, int> mutatedArchitectsIdMapper = new Dictionary<int, int>();
-
+        private int lastArchitect;
         List<string> listOfUpdates = new List<string>();
 
         public Generator(int t0clients, int t0architects, int t0projects, int t0overwatches, int t0outerProjects,
@@ -71,8 +72,6 @@ namespace StudioArchitektoniczne
             GenerateComplexData(dateRange, t1projects, t1overwatches, t1outerProjects, false);
             AssignArchitectsToProjects();
             WriteToFiles("t2");
-
-            return;
         }
         public int CountGeneratedRecords()
         {
@@ -142,7 +141,7 @@ namespace StudioArchitektoniczne
                 overwatch.endDate = overwatch.startDate.AddDays(rand.Next(5, 10));
                 var projectsDone = listOfProjectsDone.FindAll(pd => pd.projectId == project.id);
                 List<Architect> availableOverwatchers = new List<Architect>();
-                
+
                 projectsDone.ForEach(pd =>
                 {
                     var architect = listOfArchitects[pd.architectId].active
@@ -239,16 +238,19 @@ namespace StudioArchitektoniczne
         private void GenerateSimpleDataT0()
         {
             for (int i = 0; i < t0clients; i++) listOfClients.Add(new Client(i));
-            for (int i = 0; i < t0architects; i++) listOfArchitects.Add(new Architect(i, currentDate, new DateTime(2999,12,31)));
+            for (int i = 0; i < t0architects; i++) listOfArchitects.Add(new Architect(i, currentDate, new DateTime(2999, 12, 31)));
             for (int i = 0; i < t0outerSubjects; i++) listOfOuterSubjects.Add(new OuterSubject(i));
             ShuffleArchitects();
+            GenerateArchitectsInitialHierarchy();
         }
         private void GenerateSimpleDataT1()
         {
+            int numberOfarchitects = listOfArchitects.Count;
             for (int i = t0clients; i < t0clients + t1clients; i++) listOfClients.Add(new Client(i));
-            for (int i = t0architects; i < t0architects + t1architects; i++) listOfArchitects.Add(new Architect(i, currentDate, new DateTime(2999,12,31)));
+            for (int i = numberOfarchitects; i < t0architects + t1architects; i++) listOfArchitects.Add(new Architect(i, currentDate, new DateTime(2999, 12, 31)));
             for (int i = t0outerSubjects; i < t0outerSubjects + t1outerSubjects; i++) listOfOuterSubjects.Add(new OuterSubject(i));
             ShuffleArchitects();
+            GenerateArchitectsAfterHierarchy();
         }
         private void GenerateComplexData(int dateRange, int numberOfProjects, int numberOfOverwatches, int numberOfOuterProjects, bool isFirstGeneration)
         {
@@ -294,9 +296,10 @@ namespace StudioArchitektoniczne
                 OuterSubject manager = listOfOuterSubjects[rand.Next(listOfOuterSubjects.Count)];
                 Project project = listOfProjects[index];
                 index += delta;
-                ProjectOverwatch overwatch = new ProjectOverwatch(i, manager.id, 0, project.id);
+                ProjectOverwatch overwatch = new ProjectOverwatch(index, manager.id, 0, project.id);
                 project.totalPrize = project.prize + overwatch.prize;
                 project.isOverwatched = true;
+                overwatch.updateLength();
                 listOfOverwatches.Add(overwatch);
             }
         }
@@ -430,6 +433,25 @@ namespace StudioArchitektoniczne
             availableOMA = Shuffle(availableOMA);
             availableOUA = Shuffle(availableOUA);
         }
+
+        private void GenerateArchitectsInitialHierarchy()
+        {
+            var ordered = listOfArchitects.OrderByDescending(a => a.pesel).ToList();
+            ordered.ForEach(a => a.idPrzelozonego = (int) Math.Floor((double) (a.id - 1) / 10));
+            lastArchitect = ordered.Last().id;
+        }
+
+        private void GenerateArchitectsAfterHierarchy()
+        {
+            var ordered = listOfArchitects.FindAll(a => a.idPrzelozonego == -2).OrderByDescending(a => a.pesel).ToList();
+            ordered.ForEach(a => a.idPrzelozonego = lastArchitect + (int)Math.Floor((double)(a.id - 1) / 10));
+        }
+
+        private void GenerateArchitectsAfterHierarchy(List<Architect> list, int groupSupervisor)
+        {
+            var ordered = list.FindAll(a => a.idPrzelozonego == -2).OrderByDescending(a => a.pesel).ToList();
+            ordered.ForEach(a => a.idPrzelozonego = groupSupervisor + (int)Math.Floor((double)(a.id - 1) / 10));
+        }
         private static List<T> Shuffle<T>(List<T> list)
         {
             Random rand = new Random(2137);
@@ -489,7 +511,7 @@ namespace StudioArchitektoniczne
         {
             File.WriteAllText(path + "outer_subjects_" + time + ".csv", "Identyfikator podmiotu,Imię,Nazwisko,Numer telefonu,\n", Encoding.UTF8);
             File.WriteAllText(path + "outer_projects_" + time + ".csv", "Identyfikator projektu,Nazwa projektu,Identyfikator podmiotu,Rodzaj projektu,Koszt,Data rozpoczęcia,Data zakończenia,Identyfikator projektu architektonicznego,\n", Encoding.UTF8);
-            File.WriteAllText(path + "architects_" + time + ".csv", "Identyfikator pracownika,Imię,Nazwisko,Data urodzenia,Numer telefonu,Identyfikator kontraktu,Uprawnienia do nadzoru,\n", Encoding.UTF8);
+            File.WriteAllText(path + "architects_" + time + ".csv", "Identyfikator pracownika,Imię,Nazwisko,Data urodzenia,Telefon,Identyfikator kontraktu,Uprawnienia do nadzoru,Pesel\n", Encoding.UTF8);
         }
 
 
@@ -509,7 +531,7 @@ namespace StudioArchitektoniczne
 
         private void CreateOverwatchUpdates(List<Architect> architects)
         {
-           
+
         }
 
         private void CreateSpecializatonUpdates(List<Architect> architects)

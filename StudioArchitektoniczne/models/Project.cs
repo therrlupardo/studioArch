@@ -11,7 +11,7 @@ namespace StudioArchitektoniczne.models
             this.id = id;
             architectureType = RandomValueGenerator.GetEnumRandomValue<ArchitectureTypeEnum>();
             startDate = new DateTime();
-            endDate = startDate.AddDays(new Random().Next(40000));
+            endDate = startDate.AddDays(new Random().Next(300));
             prize = Calculator.CalculateProjectCost(startDate, endDate, architectureType);
             totalPrize = prize;
             size = (endDate-startDate).Days;
@@ -51,6 +51,11 @@ namespace StudioArchitektoniczne.models
             else if (overwatches < 20) overwatchAccumulation = OverwatchAccumulation.SREDNIE;
             else overwatchAccumulation = OverwatchAccumulation.DUZE;
 
+        }
+
+        public override string ToBulkString()
+        {
+            return $"{id}|{size}|{prize}|{totalPrize}|{clientOrderDate.ToShortDateString()}|{startDate.ToShortDateString()}|{endDate.ToShortDateString()}|{clientId}";
         }
     }
 }

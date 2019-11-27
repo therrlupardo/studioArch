@@ -11,7 +11,7 @@ namespace StudioArchitektoniczne.models
         public virtual string ToCsvString()
         {
             string text = "", tmp = "";
-            foreach (var prop in this.GetType().GetProperties())
+            foreach (var prop in GetType().GetProperties())
             {
                 tmp = prop.GetValue(this).ToString();
                 if (prop.PropertyType == typeof(DateTime))
