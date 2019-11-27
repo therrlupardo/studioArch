@@ -39,7 +39,7 @@ namespace StudioArchitektoniczne.models
             return String.Join('|', text);
         }
 
-        private void CorrectIfDate(ref string text)
+        public static void CorrectIfDate(ref string text)
         {
             string[] format = { "dd/MM/yyyy hh:mm:ss", "MM/dd/yyyy hh:mm:ss", };
             string[] tmp;
