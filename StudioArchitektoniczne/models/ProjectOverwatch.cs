@@ -37,5 +37,10 @@ namespace StudioArchitektoniczne.models
             else if (size <= 240) length = LengthEnum.DLUGI;
             else length = LengthEnum.BARDZO_DLUGI;
         }
+
+        public override string ToBulkString()
+        {
+            return $"{id}|{size}|{prize}|{startDate.ToShortDateString()}|{endDate.ToShortDateString()}|{architectId}|{constructionManagerId}|{projectId}";
+        }
     }
 }
