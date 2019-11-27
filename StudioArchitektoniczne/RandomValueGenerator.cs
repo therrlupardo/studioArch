@@ -69,7 +69,7 @@ namespace StudioArchitektoniczne
             {
                 randomNumers += new Random().Next(10).ToString();
             }
-            return $"{birthDate.Year.ToString().Substring(2)}{birthDate.Month}{birthDate.Day}{randomNumers}";
+            return $"{birthDate.Year.ToString().Substring(2)}{birthDate.Month.ToString("00")}{birthDate.Day.ToString("00")}{randomNumers}";
         }
 
     }
