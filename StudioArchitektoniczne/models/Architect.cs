@@ -11,6 +11,9 @@ namespace StudioArchitektoniczne.models
             specialization = RandomValueGenerator.GetEnumRandomValue<ArchitectureTypeEnum>();
             name = RandomValueGenerator.GetEnumRandomValue<NameEnum>().ToString();
             surname = RandomValueGenerator.GetEnumRandomValue<SurnameEnum>().ToString();
+            birthDate = RandomValueGenerator.GetRandomBirthDate();
+            phone = RandomValueGenerator.GetPhoneNumber();
+            contractId = new Random().Next();
             canOverwatch = new Random().Next() % 2 == 0;
             pesel = RandomValueGenerator.GetPesel();
             this.dataWstawienia = dataWstawienia;
@@ -23,6 +26,9 @@ namespace StudioArchitektoniczne.models
         public ArchitectureTypeEnum specialization { get; set; }
         public String name { get; set; }
         public String surname { get; set; }
+        public DateTime birthDate { get; set; }
+        public String phone { get; set; }
+        public int contractId { get; set; }
         public bool canOverwatch { get; set; }
         public string pesel { get; set; }
         public int idPrzelozonego { get; set; }
@@ -37,7 +43,7 @@ namespace StudioArchitektoniczne.models
 
         public override string ToCsvString()
         {
-            return $"{id},{name},{surname},{pesel},{idPrzelozonego},{GetCanOverwatchString()},{dataWstawienia.ToShortDateString()},{dataWygasniecia.ToShortDateString()}";
+            return $"{id},{name},{surname},{birthDate.ToShortDateString()},{phone},{contractId},{GetCanOverwatchString()},{pesel}";
         }
 
         public override string ToBulkString()

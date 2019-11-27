@@ -245,8 +245,9 @@ namespace StudioArchitektoniczne
         }
         private void GenerateSimpleDataT1()
         {
+            int numberOfarchitects = listOfArchitects.Count;
             for (int i = t0clients; i < t0clients + t1clients; i++) listOfClients.Add(new Client(i));
-            for (int i = t0architects; i < t0architects + t1architects; i++) listOfArchitects.Add(new Architect(i, currentDate, new DateTime(2999, 12, 31)));
+            for (int i = numberOfarchitects; i < t0architects + t1architects; i++) listOfArchitects.Add(new Architect(i, currentDate, new DateTime(2999, 12, 31)));
             for (int i = t0outerSubjects; i < t0outerSubjects + t1outerSubjects; i++) listOfOuterSubjects.Add(new OuterSubject(i));
             ShuffleArchitects();
             GenerateArchitectsAfterHierarchy();
@@ -295,9 +296,10 @@ namespace StudioArchitektoniczne
                 OuterSubject manager = listOfOuterSubjects[rand.Next(listOfOuterSubjects.Count)];
                 Project project = listOfProjects[index];
                 index += delta;
-                ProjectOverwatch overwatch = new ProjectOverwatch(i, manager.id, 0, project.id);
+                ProjectOverwatch overwatch = new ProjectOverwatch(index, manager.id, 0, project.id);
                 project.totalPrize = project.prize + overwatch.prize;
                 project.isOverwatched = true;
+                overwatch.updateLength();
                 listOfOverwatches.Add(overwatch);
             }
         }
@@ -509,7 +511,7 @@ namespace StudioArchitektoniczne
         {
             File.WriteAllText(path + "outer_subjects_" + time + ".csv", "Identyfikator podmiotu,Imię,Nazwisko,Numer telefonu,\n", Encoding.UTF8);
             File.WriteAllText(path + "outer_projects_" + time + ".csv", "Identyfikator projektu,Nazwa projektu,Identyfikator podmiotu,Rodzaj projektu,Koszt,Data rozpoczęcia,Data zakończenia,Identyfikator projektu architektonicznego,\n", Encoding.UTF8);
-            File.WriteAllText(path + "architects_" + time + ".csv", "Identyfikator pracownika,Imię,Nazwisko,Pesel,Identyfikator przełożonego,Uprawnienia do nadzoru,Data wstawienia, Data wygaśnięcia\n", Encoding.UTF8);
+            File.WriteAllText(path + "architects_" + time + ".csv", "Identyfikator pracownika,Imię,Nazwisko,Data urodzenia,Telefon,Identyfikator kontraktu,Uprawnienia do nadzoru,Pesel\n", Encoding.UTF8);
         }
 
 
