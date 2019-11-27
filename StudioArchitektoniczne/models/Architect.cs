@@ -43,7 +43,7 @@ namespace StudioArchitektoniczne.models
 
         public override string ToCsvString()
         {
-            return $"{id},{name},{surname},{birthDate},{phone},{contractId},{GetCanOverwatchString()},{pesel}";
+            return $"{id},{name},{surname},{birthDate.ToShortDateString()},{phone},{contractId},{GetCanOverwatchString()},{pesel}";
         }
 
         public override string ToBulkString()
