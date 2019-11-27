@@ -245,8 +245,9 @@ namespace StudioArchitektoniczne
         }
         private void GenerateSimpleDataT1()
         {
+            int numberOfarchitects = listOfArchitects.Count;
             for (int i = t0clients; i < t0clients + t1clients; i++) listOfClients.Add(new Client(i));
-            for (int i = t0architects; i < t0architects + t1architects; i++) listOfArchitects.Add(new Architect(i, currentDate, new DateTime(2999, 12, 31)));
+            for (int i = numberOfarchitects; i < t0architects + t1architects; i++) listOfArchitects.Add(new Architect(i, currentDate, new DateTime(2999, 12, 31)));
             for (int i = t0outerSubjects; i < t0outerSubjects + t1outerSubjects; i++) listOfOuterSubjects.Add(new OuterSubject(i));
             ShuffleArchitects();
             GenerateArchitectsAfterHierarchy();
