@@ -10,13 +10,13 @@ namespace StudioArchitektoniczne.models.outer
             this.id = id;
             name = RandomValueGenerator.GetEnumRandomValue<NameEnum>().ToString();
             surname = RandomValueGenerator.GetEnumRandomValue<SurnameEnum>().ToString();
-//            phone = RandomValueGenerator.GetPhoneNumber();
+            phone = RandomValueGenerator.GetPhoneNumber();
         }
 
         public int id { get; set; }
         public string name { get; set; }
         public string surname { get; set; }
-//        public string phone { get; set; }
+        public string phone { get; set; }
 
     }
 }
