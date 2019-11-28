@@ -5,6 +5,7 @@ namespace StudioArchitektoniczne.models
 {
     class Architect : DataModel
     {
+        public Architect() { }
         public Architect(int id, DateTime dataWstawienia, DateTime dataWygasniecia)
         {
             this.id = id;
@@ -53,17 +54,33 @@ namespace StudioArchitektoniczne.models
 
         public Architect Copy()
         {
-            Architect architect = new Architect(id, dataWstawienia, dataWygasniecia);
-            architect.id = id;
-            architect.active = active;
-            architect.dataWstawienia = dataWstawienia;
-            architect.dataWygasniecia = dataWygasniecia;
-            architect.canOverwatch = canOverwatch;
-            architect.idPrzelozonego = idPrzelozonego;
-            architect.name = name;
-            architect.pesel = pesel;
-            architect.specialization = specialization;
-            architect.surname = surname;
+//            Architect architect = new Architect(id, dataWstawienia, dataWygasniecia);
+//            architect.id = id;
+//            architect.active = active;
+//            architect.dataWstawienia = dataWstawienia;
+//            architect.dataWygasniecia = dataWygasniecia;
+//            architect.canOverwatch = canOverwatch;
+//            architect.idPrzelozonego = idPrzelozonego;
+//            architect.name = name;
+//            architect.pesel = pesel;
+//            architect.specialization = specialization;
+//            architect.surname = surname;
+            Architect architect = new Architect()
+            {
+                id = this.id,
+                active = this.active,
+                dataWstawienia = this.dataWstawienia,
+                dataWygasniecia = this.dataWygasniecia,
+                canOverwatch = this.canOverwatch,
+                idPrzelozonego = this.idPrzelozonego,
+                name = this.name,
+                pesel = this.pesel,
+                specialization = this.specialization,
+                surname = this.surname,
+                contractId = this.contractId,
+                birthDate = this.birthDate,
+                phone = this.phone
+            };
             return architect;
         }
     }

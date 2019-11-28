@@ -324,7 +324,7 @@ namespace StudioArchitektoniczne
         }
         private void MutateArchitectsSpecializations()
         {
-            var toMutate = rand.Next((availableOBA.Count + availableOMA.Count + availableOUA.Count) / 2);
+            var toMutate = rand.Next(1, 4);
             List<Architect> architectsToMutate = ChooseArchitectsToMutate(toMutate);
             List<Architect> mutatedArchitects = new List<Architect>();
             // zmień specjalizacje wybranym architektom
@@ -357,7 +357,7 @@ namespace StudioArchitektoniczne
         }
         private void MutateArchitectsCanOverwatch()
         {
-            var toMutate = rand.Next((availableOBA.Count + availableOMA.Count + availableOUA.Count) / 10);
+            var toMutate = rand.Next(1,4);
             var architectsToMutate = ChooseArchitectsToMutate(toMutate);
             var mutatedArchitects = new List<Architect>();
             architectsToMutate.ForEach(architect =>
@@ -538,7 +538,8 @@ namespace StudioArchitektoniczne
         {
             foreach (var architect in architects)
             {
-                listOfUpdates.Add(String.Format("UPDATE Pracownicy SET Specjalizacja='{0}' WHERE ID_PRACOWNIK={1}", architect.specialization.ToString(), architect.id));
+                var id = listOfArchitects.FindIndex(a => a.active == false && a.pesel == architect.pesel);
+                listOfUpdates.Add(String.Format("UPDATE Pracownicy SET Specjalizacja='{0}' WHERE ID_PRACOWNIK={1}", architect.specialization.ToString(), id));
             }
         }
 
