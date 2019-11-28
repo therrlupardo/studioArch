@@ -40,11 +40,7 @@ namespace StudioArchitektoniczne.models
 
         public override string ToBulkString()
         {
-            var sd = startDate.ToString();
-            var ed = endDate.ToString();
-            DataModel.CorrectIfDate(ref sd);
-            DataModel.CorrectIfDate(ref ed);
-            return $"{id}|{size}|{prize}|{sd}|{ed}|{architectId}|{constructionManagerId}|{projectId}";
+            return $"{id}|{size}|{prize}|{DataModel.ConvertDateToDDMMYYYY(startDate)}|{DataModel.ConvertDateToDDMMYYYY(endDate)}|{architectId}|{constructionManagerId}|{projectId}";
         }
     }
 }
