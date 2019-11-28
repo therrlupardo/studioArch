@@ -6,8 +6,8 @@ namespace StudioArchitektoniczne
     {
 
         static void Main(string[] args)
-        {
-            Generator generator = Generator100k();
+        { 
+            Generator generator = MalyGenerator();
             generator.GenerateData();
             var counter = generator.CountGeneratedRecords();
             return;
@@ -47,6 +47,11 @@ namespace StudioArchitektoniczne
             Console.WriteLine("Teraz zostaną wygenerowane dane. Proszę czekać");
             return new Generator(t0clients, t0architects, t0projects, t0overwatches, t0outerProjects, t0outerSubjects,
                                  t1clients, t1architects, t1projects, t1overwatches, t1outerProjects, t1outerSubjects);
+        }
+
+        private static Generator MalyGenerator()
+        {
+            return new Generator(10,100,10,200,10,10,10,100,10,200,10,10);
         }
 
         private static Generator Generator100k()
