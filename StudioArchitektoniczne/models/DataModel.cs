@@ -41,25 +41,24 @@ namespace StudioArchitektoniczne.models
 
         public static void CorrectIfDate(ref string text)
         {
-            string[] format = { "dd/MM/yyyy hh:mm:ss", "MM/dd/yyyy hh:mm:ss", };
+            string[] format = { "dd/MM/yyyy", "MM/dd/yyyy", };
             string[] tmp;
             if (DateTime.TryParseExact(text, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out _))
             {
-                text = text.Substring(0, text.Length - 9);
                 tmp = text.Split("/");
                 text = "";
                 for (int i = tmp.Length - 1; i >= 0; i--)
                 {
                     text += tmp[i];
                 }
-                text = text.Replace("/", "");
             }
         }
 
         public static string ConvertDateToDDMMYYYY(DateTime date)
         {
             var txt = date.ToShortDateString();
-            return txt.Replace(".", "");
+            CorrectIfDate(ref txt);
+            return txt;
         }
 
     }
