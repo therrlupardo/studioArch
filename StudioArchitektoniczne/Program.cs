@@ -51,7 +51,7 @@ namespace StudioArchitektoniczne
 
         private static Generator MalyGenerator()
         {
-            return new Generator(10,100,10,200,10,10,10,100,10,200,10,10);
+            return new Generator(10,100,200,10,10,10,10,100,100,10,10,10);
         }
 
         private static Generator Generator100k()

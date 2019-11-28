@@ -41,7 +41,7 @@ namespace StudioArchitektoniczne.models
 
         public static void CorrectIfDate(ref string text)
         {
-            string[] format = { "dd/MM/yyyy", "MM/dd/yyyy", };
+            string[] format = { "dd/MM/yyyy", "MM/dd/yyyy", "dd.MM.yyyy" };
             string[] tmp;
             if (DateTime.TryParseExact(text, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out _))
             {
@@ -57,6 +57,10 @@ namespace StudioArchitektoniczne.models
         public static string ConvertDateToDDMMYYYY(DateTime date)
         {
             var txt = date.ToShortDateString();
+            if (txt.Contains('.'))
+            {
+                txt = txt.Replace('.', '/');
+            }
             CorrectIfDate(ref txt);
             return txt;
         }

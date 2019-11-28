@@ -291,12 +291,12 @@ namespace StudioArchitektoniczne
         {
             var delta = count != 0 ? numberOfProjects / count : numberOfProjects;
             int index = isFirstGeneration ? 0 : t0projects;
-            for (int i = 0; i < count; i++)
+            for (int i = isFirstGeneration ? 0 : t0overwatches; i < count; i++)
             {
                 OuterSubject manager = listOfOuterSubjects[rand.Next(listOfOuterSubjects.Count)];
                 Project project = listOfProjects[index];
                 index += delta;
-                ProjectOverwatch overwatch = new ProjectOverwatch(index, manager.id, 0, project.id);
+                ProjectOverwatch overwatch = new ProjectOverwatch(i, manager.id, 0, project.id);
                 project.totalPrize = project.prize + overwatch.prize;
                 project.isOverwatched = true;
                 overwatch.updateLength();
