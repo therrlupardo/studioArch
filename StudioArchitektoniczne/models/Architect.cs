@@ -43,9 +43,7 @@ namespace StudioArchitektoniczne.models
 
         public override string ToCsvString()
         {
-            string bd = birthDate.ToString();
-            DataModel.CorrectIfDate(ref bd);
-            return $"{id},{name},{surname},{bd},{phone},{contractId},{GetCanOverwatchString()},{pesel}";
+            return $"{id},{name},{surname},{DataModel.ConvertDateToDDMMYYYY(birthDate)},{phone},{contractId},{GetCanOverwatchString()},{pesel}";
         }
 
         public override string ToBulkString()

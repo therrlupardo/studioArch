@@ -56,5 +56,11 @@ namespace StudioArchitektoniczne.models
             }
         }
 
+        public static string ConvertDateToDDMMYYYY(DateTime date)
+        {
+            var txt = date.ToShortDateString();
+            return txt.Replace(".", "");
+        }
+
     }
 }
