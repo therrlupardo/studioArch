@@ -41,7 +41,7 @@ namespace StudioArchitektoniczne.models
 
         public static void CorrectIfDate(ref string text)
         {
-            string[] format = { "dd/MM/yyyy", "MM/dd/yyyy", "dd.MM.yyyy" };
+            string[] format = { "dd/MM/yyyy", "MM/dd/yyyy" };
             string[] tmp;
             if (DateTime.TryParseExact(text, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out _))
             {

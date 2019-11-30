@@ -35,6 +35,7 @@ namespace StudioArchitektoniczne.models
         public bool isOverwatched { get; set; }
         public LengthEnum length { get; set; }
         public OverwatchAccumulation overwatchAccumulation { get; set; }
+        public int currentOverwatches { get; set; }
 
         public void updateSize(int overwatches)
         {
@@ -51,11 +52,17 @@ namespace StudioArchitektoniczne.models
             else if (overwatches < 20) overwatchAccumulation = OverwatchAccumulation.SREDNIE;
             else overwatchAccumulation = OverwatchAccumulation.DUZE;
 
+            currentOverwatches = overwatches;
+
+        }
+        private String GetIsOverwatchedString()
+        {
+            return isOverwatched ? "NADZOROWANO" : "NIENADZOROWANO";
         }
 
         public override string ToBulkString()
         {
-            return $"{id}|{size}|{prize}|{totalPrize}|{DataModel.ConvertDateToDDMMYYYY(clientOrderDate)}|{DataModel.ConvertDateToDDMMYYYY(startDate)}|{DataModel.ConvertDateToDDMMYYYY(endDate)}|{clientId}";
+            return $"{id}|{size}|{prize}|{totalPrize}|{architectureType}|{GetIsOverwatchedString()}|{currentOverwatches}|{DataModel.ConvertDateToDDMMYYYY(clientOrderDate)}|{DataModel.ConvertDateToDDMMYYYY(startDate)}|{DataModel.ConvertDateToDDMMYYYY(endDate)}|{clientId}";
         }
     }
 }
