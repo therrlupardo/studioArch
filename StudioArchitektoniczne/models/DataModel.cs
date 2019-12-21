@@ -1,19 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Text;
-using System.Text.RegularExpressions;
+using ArchitecturalStudio.models.interfaces;
+using static System.DateTime;
 
-namespace StudioArchitektoniczne.models
+namespace ArchitecturalStudio.models
 {
-    public abstract class DataModel
+    public abstract class  DataModel: IBulkConverter, ICsvConverter
     {
-        public virtual string ToCsvString()
+        public virtual string ToCsv()
         {
-            string text = "", tmp = "";
+            var text = "";
             foreach (var prop in GetType().GetProperties())
             {
-                tmp = prop.GetValue(this).ToString();
+                var tmp = prop.GetValue(this).ToString();
                 if (prop.PropertyType == typeof(DateTime))
                 {
                     tmp = tmp.Substring(0, tmp.Length - 9);
@@ -23,38 +22,34 @@ namespace StudioArchitektoniczne.models
             return text;
         }
 
-        public virtual string ToBulkString()
+        public virtual string ToBulk()
         {
-            var properties = this.GetType().GetProperties();
-            string[] text = new string[properties.Length];
-            string tmp = "";
+            var properties = GetType().GetProperties();
+            var text = new string[properties.Length];
 
-            for (int i = 0; i < properties.Length; i++)
+            for (var i = 0; i < properties.Length; i++)
             {
-                tmp = properties[i].GetValue(this).ToString();
+                var tmp = properties[i].GetValue(this).ToString();
                 CorrectIfDate(ref tmp);
                 text[i] = "" + tmp;
             }
 
-            return String.Join('|', text);
+            return string.Join('|', text);
         }
 
         public static void CorrectIfDate(ref string text)
         {
             string[] format = { "dd/MM/yyyy", "MM/dd/yyyy" };
-            string[] tmp;
-            if (DateTime.TryParseExact(text, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out _))
+            if (!TryParseExact(text, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out _)) return;
+            var tmp = text.Split("/");
+            text = "";
+            for (var i = tmp.Length - 1; i >= 0; i--)
             {
-                tmp = text.Split("/");
-                text = "";
-                for (int i = tmp.Length - 1; i >= 0; i--)
-                {
-                    text += tmp[i];
-                }
+                text += tmp[i];
             }
         }
 
-        public static string ConvertDateToDDMMYYYY(DateTime date)
+        public static string ConvertDate(DateTime date)
         {
             var txt = date.ToShortDateString();
             if (txt.Contains('.'))
@@ -64,6 +59,5 @@ namespace StudioArchitektoniczne.models
             CorrectIfDate(ref txt);
             return txt;
         }
-
     }
 }

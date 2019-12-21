@@ -1,22 +1,27 @@
-﻿using StudioArchitektoniczne.models.enums;
-using System;
+﻿using System;
+using ArchitecturalStudio.models.enums;
 
-namespace StudioArchitektoniczne.models.outer
+namespace ArchitecturalStudio.models.outer
 {
-    class OuterSubject : DataModel
+    public class OuterSubject : DataModel
     {
         public OuterSubject(int id)
         {
-            this.id = id;
-            name = RandomValueGenerator.GetEnumRandomValue<NameEnum>().ToString();
-            surname = RandomValueGenerator.GetEnumRandomValue<SurnameEnum>().ToString();
-            phone = RandomValueGenerator.GetPhoneNumber();
+            Id = id;
+            InitRandomValues();
         }
 
-        public int id { get; set; }
-        public string name { get; set; }
-        public string surname { get; set; }
-        public string phone { get; set; }
+        private void InitRandomValues()
+        {
+            Name = RandomValueGenerator.GetEnumRandomValue<NameEnum>().ToString();
+            Surname = RandomValueGenerator.GetEnumRandomValue<SurnameEnum>().ToString();
+            Phone = RandomValueGenerator.GetPhoneNumber();
+        }
+
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Surname { get; set; }
+        public string Phone { get; set; }
 
     }
 }

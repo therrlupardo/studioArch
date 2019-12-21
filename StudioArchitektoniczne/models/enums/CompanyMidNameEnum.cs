@@ -1,6 +1,6 @@
-﻿namespace StudioArchitektoniczne.models.enums.company
+﻿namespace ArchitecturalStudio.models.enums.company
 {
-    enum CompanyMidNameEnum
+    public enum CompanyMidNameEnum
     {
         POL,
         EX,

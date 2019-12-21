@@ -1,6 +1,6 @@
-﻿namespace StudioArchitektoniczne.models.enums
+﻿namespace ArchitecturalStudio.models.enums
 {
-    enum NameEnum
+    public enum NameEnum
     {
         JAN,
         PAWEL,

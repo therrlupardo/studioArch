@@ -1,87 +1,83 @@
-﻿using StudioArchitektoniczne.models.enums;
-using System;
+﻿using System;
+using ArchitecturalStudio.models.enums;
 
-namespace StudioArchitektoniczne.models
+namespace ArchitecturalStudio.models
 {
-    class Architect : DataModel
+    public class Architect : DataModel
     {
+        private const string Authorized = "UPRAWNIONY";
+        private const string Unauthorized = "NIEUPRAWNIONY";
+
         public Architect() { }
-        public Architect(int id, DateTime dataWstawienia, DateTime dataWygasniecia)
+        public Architect(int id, DateTime insertDate, DateTime expirationDate)
         {
-            this.id = id;
-            specialization = RandomValueGenerator.GetEnumRandomValue<ArchitectureTypeEnum>();
-            name = RandomValueGenerator.GetEnumRandomValue<NameEnum>().ToString();
-            surname = RandomValueGenerator.GetEnumRandomValue<SurnameEnum>().ToString();
-            birthDate = RandomValueGenerator.GetRandomBirthDate();
-            phone = RandomValueGenerator.GetPhoneNumber();
-            contractId = new Random().Next();
-            canOverwatch = new Random().Next() % 2 == 0;
-            pesel = RandomValueGenerator.GetPesel();
-            this.dataWstawienia = dataWstawienia;
-            this.dataWygasniecia = dataWygasniecia;
-            active = true;
-            idPrzelozonego = -2; // -1 is top supervisor, -2 is none (initial value)
+            Id = id;
+            InsertDate = insertDate;
+            ExpirationDate = expirationDate;
+            Active = true;
+            PrincipalId = -2; // -1 is top supervisor, -2 is none (initial value)
+            InitRandomValues();
         }
 
-        public int id { get; set; }
-        public ArchitectureTypeEnum specialization { get; set; }
-        public String name { get; set; }
-        public String surname { get; set; }
-        public DateTime birthDate { get; set; }
-        public String phone { get; set; }
-        public int contractId { get; set; }
-        public bool canOverwatch { get; set; }
-        public string pesel { get; set; }
-        public int idPrzelozonego { get; set; }
-        public DateTime dataWstawienia { get; set; }
-        public DateTime dataWygasniecia { get; set; }
-        public Boolean active { get; set; }
-
-        private String GetCanOverwatchString()
+        private void InitRandomValues()
         {
-            return canOverwatch ? "UPRAWNIONY" : "NIEUPRAWNIONY";
+            Specialization = RandomValueGenerator.GetEnumRandomValue<ArchitectureTypeEnum>();
+            Name = RandomValueGenerator.GetEnumRandomValue<NameEnum>().ToString();
+            Surname = RandomValueGenerator.GetEnumRandomValue<SurnameEnum>().ToString();
+            BirthDate = RandomValueGenerator.GetRandomBirthDate();
+            Phone = RandomValueGenerator.GetPhoneNumber();
+            ContractId = new Random().Next();
+            CanSupervise = new Random().Next() % 2 == 0;
+            Pesel = RandomValueGenerator.GetPesel();
         }
 
-        public override string ToCsvString()
+        public int Id { get; set; }
+        public ArchitectureTypeEnum Specialization { get; set; }
+        public string Name { get; set; }
+        public string Surname { get; set; }
+        public DateTime BirthDate { get; set; }
+        public string Phone { get; set; }
+        public int ContractId { get; set; }
+        public bool CanSupervise { get; set; }
+        public string Pesel { get; set; }
+        public int PrincipalId { get; set; }
+        public DateTime InsertDate { get; set; }
+        public DateTime ExpirationDate { get; set; }
+        public bool Active { get; set; }
+
+        private string CanSuperviseToString()
         {
-            return $"{id},{name},{surname},{DataModel.ConvertDateToDDMMYYYY(birthDate)},{phone},{contractId},{GetCanOverwatchString()},{pesel}";
+            return CanSupervise ? Authorized : Unauthorized;
         }
 
-        public override string ToBulkString()
+        public override string ToCsv()
         {
-            return $"{id}|{specialization}|{idPrzelozonego}";
+            return $"{Id},{Name},{Surname},{ConvertDate(BirthDate)},{Phone},{ContractId},{CanSuperviseToString()},{Pesel}";
+        }
+
+        public override string ToBulk()
+        {
+            return $"{Id}|{Specialization}|{PrincipalId}";
         }
 
         public Architect Copy()
         {
-//            Architect architect = new Architect(id, dataWstawienia, dataWygasniecia);
-//            architect.id = id;
-//            architect.active = active;
-//            architect.dataWstawienia = dataWstawienia;
-//            architect.dataWygasniecia = dataWygasniecia;
-//            architect.canOverwatch = canOverwatch;
-//            architect.idPrzelozonego = idPrzelozonego;
-//            architect.name = name;
-//            architect.pesel = pesel;
-//            architect.specialization = specialization;
-//            architect.surname = surname;
-            Architect architect = new Architect()
+            return new Architect
             {
-                id = this.id,
-                active = this.active,
-                dataWstawienia = this.dataWstawienia,
-                dataWygasniecia = this.dataWygasniecia,
-                canOverwatch = this.canOverwatch,
-                idPrzelozonego = this.idPrzelozonego,
-                name = this.name,
-                pesel = this.pesel,
-                specialization = this.specialization,
-                surname = this.surname,
-                contractId = this.contractId,
-                birthDate = this.birthDate,
-                phone = this.phone
+                Id = Id,
+                Active = Active,
+                InsertDate = InsertDate,
+                ExpirationDate = ExpirationDate,
+                CanSupervise = CanSupervise,
+                PrincipalId = PrincipalId,
+                Name = Name,
+                Pesel = Pesel,
+                Specialization = Specialization,
+                Surname = Surname,
+                ContractId = ContractId,
+                BirthDate = BirthDate,
+                Phone = Phone
             };
-            return architect;
         }
     }
 }

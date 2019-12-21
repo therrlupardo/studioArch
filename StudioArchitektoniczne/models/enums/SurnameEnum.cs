@@ -1,6 +1,6 @@
-﻿namespace StudioArchitektoniczne.models.enums
+﻿namespace ArchitecturalStudio.models.enums
 {
-    enum SurnameEnum
+    public enum SurnameEnum
     {
         KOWALSKI,
         WOŹNIAK,

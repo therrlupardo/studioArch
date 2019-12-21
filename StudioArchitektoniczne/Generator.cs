@@ -1,67 +1,118 @@
-﻿using StudioArchitektoniczne.models;
-using StudioArchitektoniczne.models.enums;
-using StudioArchitektoniczne.models.outer;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading;
+using ArchitecturalStudio.models;
+using ArchitecturalStudio.models.enums;
+using ArchitecturalStudio.models.outer;
+using ArchitecturalStudio.Properties;
 
-namespace StudioArchitektoniczne
+namespace ArchitecturalStudio
 {
-    class Generator
+    public class Generator
     {
-        int t0clients, t0architects, t0projects, t0overwatches, t0outerProjects, t0outerSubjects;
-        int t1clients, t1architects, t1projects, t1overwatches, t1outerProjects, t1outerSubjects;
-        Random rand;
-        DateTime currentDate = new DateTime(2010, 1, 1);
-        private int overwatches = 0;
-        List<Architect> listOfArchitects = new List<Architect>();
-        List<Client> listOfClients = new List<Client>();
-        List<Project> listOfProjects = new List<Project>();
-        List<ProjectOverwatch> listOfOverwatches = new List<ProjectOverwatch>();
-        List<OuterProject> listOfOuterProjects = new List<OuterProject>();
-        List<OuterSubject> listOfOuterSubjects = new List<OuterSubject>();
-        List<ProjectDone> listOfProjectsDone = new List<ProjectDone>();
+        private GeneratorParameters FirstPeriod, SecondPeriod;
+        Random _rand;
+        DateTime _currentDate = new DateTime(2010, 1, 1);
+        private int _supervisions = 0;
+        List<Architect> _listOfArchitects = new List<Architect>();
+        List<Client> _listOfClients = new List<Client>();
+        List<Project> _listOfProjects = new List<Project>();
+        List<ProjectSupervision> _listOfSupervisors = new List<ProjectSupervision>();
+        List<OuterProject> _listOfOuterProjects = new List<OuterProject>();
+        List<OuterSubject> _listOfOuterSubjects = new List<OuterSubject>();
+        List<ProjectDone> _listOfProjectsDone = new List<ProjectDone>();
 
-        List<Project> projectsOM = new List<Project>();
-        List<Project> projectsOU = new List<Project>();
-        List<Project> projectsOB = new List<Project>();
+        List<Project> _projectsOm = new List<Project>();
+        List<Project> _projectsOu = new List<Project>();
+        List<Project> _projectsOb = new List<Project>();
 
-        List<Architect> availableOMA = new List<Architect>();
-        List<Architect> availableOUA = new List<Architect>();
-        List<Architect> availableOBA = new List<Architect>();
+        List<Architect> _availableOma = new List<Architect>();
+        List<Architect> _availableOua = new List<Architect>();
+        List<Architect> _availableOba = new List<Architect>();
 
-        Dictionary<int, int> mutatedArchitectsIdMapper = new Dictionary<int, int>();
-        private int lastArchitect;
-        List<string> listOfUpdates = new List<string>();
+        Dictionary<int, int> _mutatedArchitectsIdMapper = new Dictionary<int, int>();
+        private int _lastArchitect;
+        List<string> _listOfUpdates = new List<string>();
 
-        public Generator(int t0clients, int t0architects, int t0projects, int t0overwatches, int t0outerProjects,
-            int t0outerSubjects, int t1clients, int t1architects, int t1projects,
-            int t1overwatches, int t1outerProjects, int t1outerSubjects)
+        public void InitGenerator(GeneratorParameters firstPeriod, GeneratorParameters secondPeriod)
         {
-            this.rand = new Random(2137);
-            this.t0clients = t0clients;
-            this.t0architects = t0architects;
-            this.t0projects = t0projects;
-            this.t0overwatches = t0overwatches;
-            this.t0outerProjects = t0outerProjects;
-            this.t0outerSubjects = t0outerSubjects;
-            this.t1clients = t1clients;
-            this.t1architects = t1architects;
-            this.t1projects = t1projects;
-            this.t1overwatches = t1overwatches;
-            this.t1outerProjects = t1outerProjects;
-            this.t1outerSubjects = t1outerSubjects;
+            _rand = new Random(2137);
+            FirstPeriod = firstPeriod;
+            SecondPeriod = secondPeriod;
         }
+
+        public Generator(GeneratorSize size)
+        {
+            switch (size)
+            {
+                case GeneratorSize.SMALL:
+                    InitSmallGenerator();
+                    break;
+                case GeneratorSize.HUNDRED_THOUSAND:
+                    InitHundredThousandGenerator();
+                    break;
+                case GeneratorSize.QUARTER_MILLION:
+                    InitQuarterMillionGenerator();
+                    break;
+                case GeneratorSize.HALF_MILLION:
+                    InitHalfMillionGenerator();
+                    break;
+                case GeneratorSize.MILLION:
+                    InitMillionGenerator();
+                    break;
+                default:
+                    throw new ArgumentException();
+            }
+        }
+
+        public Generator(GeneratorParameters firstPeriod, GeneratorParameters secondPeriod)
+        {
+            InitGenerator(firstPeriod, secondPeriod);
+        }
+
+        private void InitSmallGenerator()
+        {
+            var firstPeriod = new GeneratorParameters(10, 100, 200, 10, 10, 10);
+            var secondPeriod = new GeneratorParameters(10, 100, 200, 10, 10, 10);
+            InitGenerator(firstPeriod, secondPeriod);
+        }
+
+        private void InitHundredThousandGenerator()
+        {
+            var firstPeriod = new GeneratorParameters(200, 30000, 10000, 2000, 2000, 200);
+            var secondPeriod = new GeneratorParameters(100, 15000, 10000, 1000, 1000, 100);
+            InitGenerator(firstPeriod, secondPeriod);
+        }
+
+        private void InitQuarterMillionGenerator()
+        {
+            var firstPeriod = new GeneratorParameters(400, 60000, 20000, 4000, 4000, 400);
+            var secondPeriod = new GeneratorParameters(200, 30000, 10000, 2000, 2000, 200);
+            InitGenerator(firstPeriod, secondPeriod);
+        }
+
+        private void InitHalfMillionGenerator()
+        {
+            var firstPeriod = new GeneratorParameters(1000, 150000, 50000, 10000, 10000, 1000);
+            var secondPeriod = new GeneratorParameters(500, 75000, 25000, 5000, 5000, 500);
+            InitGenerator(firstPeriod, secondPeriod);
+        }
+
+        private void InitMillionGenerator()
+        {
+            var firstPeriod = new GeneratorParameters(2000, 300000, 100000, 20000, 20000, 2000);
+            var secondPeriod = new GeneratorParameters(1000, 150000, 100000, 10000, 10000, 1000);
+            InitGenerator(firstPeriod, secondPeriod);
+        }
+
         public void GenerateData()
         {
 
-            var dateRange = (DateTime.Today - currentDate).Days / 10;
+            var dateRange = (DateTime.Today - _currentDate).Days / 10;
             GenerateSimpleDataT0();
-            GenerateComplexData(dateRange, t0projects, t0overwatches, t0outerProjects, true);
+            GenerateComplexData(dateRange, FirstPeriod.Projects, FirstPeriod.Supervisions, FirstPeriod.OuterProjects, true);
             AssignArchitectsToProjects();
             WriteToFiles("t1");
 
@@ -69,337 +120,340 @@ namespace StudioArchitektoniczne
             WriteUpdatesToFiles("t2");
 
             GenerateSimpleDataT1();
-            GenerateComplexData(dateRange, t1projects, t1overwatches, t1outerProjects, false);
+            GenerateComplexData(dateRange, SecondPeriod.Projects, SecondPeriod.Supervisions, SecondPeriod.OuterProjects, false);
             AssignArchitectsToProjects();
             WriteToFiles("t2");
         }
         public int CountGeneratedRecords()
         {
-            return listOfArchitects.Count + listOfClients.Count + listOfOuterProjects.Count + listOfOuterSubjects.Count +
-                listOfOverwatches.Count + listOfProjects.Count + listOfProjectsDone.Count;
+            return _listOfArchitects.Count + _listOfClients.Count + _listOfOuterProjects.Count + _listOfOuterSubjects.Count +
+                _listOfSupervisors.Count + _listOfProjects.Count + _listOfProjectsDone.Count;
         }
 
         private void AssignArchitectsToProjects()
         {
-            while (listOfProjects.Find(p => p.status != ProjectStatusEnum.UKONCZONY) != null)
+            while (_listOfProjects.Find(p => p.Status != ProjectStatusEnum.UKONCZONY) != null)
             {
                 var type = RandomValueGenerator.GetEnumRandomValue<ArchitectureTypeEnum>();
                 switch (type)
                 {
                     case ArchitectureTypeEnum.OBIEKT_BIUROWY:
-                        CreateConnection(projectsOB, availableOBA);
+                        CreateConnection(_projectsOb, _availableOba);
                         break;
                     case ArchitectureTypeEnum.OBIEKT_MIESZKALNY:
-                        CreateConnection(projectsOM, availableOMA);
+                        CreateConnection(_projectsOm, _availableOma);
                         break;
                     case ArchitectureTypeEnum.OBIEKT_USLUGOWY:
-                        CreateConnection(projectsOU, availableOUA);
+                        CreateConnection(_projectsOu, _availableOua);
                         break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
-                if (rand.Next(30) < 1)
-                {
-                    currentDate = currentDate.AddDays(1);
-                    FreeArchitects();
-                }
+
+                if (_rand.Next(30) >= 1) continue;
+                _currentDate = _currentDate.AddDays(1);
+                FreeArchitects();
             }
         }
         private void CreateConnection(List<Project> projects, List<Architect> architects)
         {
             if (!architects.Any() || !projects.Any()) return;
-            var neededArchitects = rand.Next(1, Math.Min(4, architects.Count));
-            Project project = projects[0];
-            if (project.clientOrderDate > currentDate) return;
+            var neededArchitects = _rand.Next(1, Math.Min(4, architects.Count));
+            var project = projects[0];
+            if (project.ClientOrderDate > _currentDate) return;
 
-            var id = projects.FindIndex(p => p.id == project.id);
-            projects[id].startDate = currentDate;
-            projects[id].endDate = currentDate.AddDays(rand.Next(10, 20));
-            projects[id].updateSize(overwatches);
+            var id = projects.FindIndex(p => p.Id == project.Id);
+            projects[id].StartDate = _currentDate;
+            projects[id].EndDate = _currentDate.AddDays(_rand.Next(10, 20));
+            projects[id].Update(_supervisions);
 
-            var outerProjects = listOfOuterProjects.FindAll(op => op.projectId == project.id);
+            var outerProjects = _listOfOuterProjects.FindAll(op => op.ProjectId == project.Id);
 
             foreach (var pr in outerProjects)
             {
-                pr.startDate = currentDate.AddDays(rand.Next(0, 10));
-                pr.endDate = pr.startDate.AddDays(rand.Next(0, 10));
+                pr.StartDate = _currentDate.AddDays(_rand.Next(0, 10));
+                pr.EndDate = pr.StartDate.AddDays(_rand.Next(0, 10));
             }
 
-            for (int i = 0; i < neededArchitects; i++)
+            var pd = new ProjectDone();
+            for (var i = 0; i < neededArchitects; i++)
             {
-                ProjectDone pd = new ProjectDone();
-                pd.architectId = architects[0].id;
+                pd.ArchitectId = architects[0].Id;
                 architects.Remove(architects[0]);
-                pd.projectId = project.id;
-                listOfProjectsDone.Add(pd);
+                pd.ProjectId = project.Id;
+                _listOfProjectsDone.Add(pd);
             }
 
-            projects.RemoveAll(p => p.id == project.id);
-            var overwatch = listOfOverwatches.Find(o => o.projectId == project.id);
-            if (overwatch != null)
+            projects.RemoveAll(p => p.Id == project.Id);
+            var supervision = _listOfSupervisors.Find(o => o.ProjectId == project.Id);
+            if (supervision != null)
             {
-                overwatches++;
-                overwatch.startDate = project.endDate;
-                overwatch.endDate = overwatch.startDate.AddDays(rand.Next(5, 10));
-                var projectsDone = listOfProjectsDone.FindAll(pd => pd.projectId == project.id);
-                List<Architect> availableOverwatchers = new List<Architect>();
+                _supervisions++;
+                supervision.StartDate = project.EndDate;
+                supervision.EndDate = supervision.StartDate.AddDays(_rand.Next(5, 10));
+                var projectsDone = _listOfProjectsDone.FindAll(pd => pd.ProjectId == project.Id);
+                var availableSupervisors = new List<Architect>();
 
-                projectsDone.ForEach(pd =>
+                projectsDone.ForEach(projectDone =>
                 {
-                    var architect = listOfArchitects[pd.architectId].active
-                        ? listOfArchitects[pd.architectId]
-                        : listOfArchitects[mutatedArchitectsIdMapper.GetValueOrDefault(pd.architectId)];
-                    availableOverwatchers.Add(architect);
+                    var architect = _listOfArchitects[projectDone.ArchitectId].Active
+                        ? _listOfArchitects[projectDone.ArchitectId]
+                        : _listOfArchitects[_mutatedArchitectsIdMapper.GetValueOrDefault(projectDone.ArchitectId)];
+                    availableSupervisors.Add(architect);
                 });
-                if (availableOverwatchers.Any() && availableOverwatchers.Find(o => o.canOverwatch) != null)
+                if (availableSupervisors.Any() && availableSupervisors.Find(o => o.CanSupervise) != null)
                 {
-                    var arch = availableOverwatchers.Find(o => o.canOverwatch);
-                    if (arch != null) overwatch.architectId = arch.id;
+                    var arch = availableSupervisors.Find(o => o.CanSupervise);
+                    if (arch != null) supervision.ArchitectId = arch.Id;
                 }
                 else
                 {
-                    var arch = architects.Find(a => a.canOverwatch);
-                    if (arch != null) overwatch.architectId = arch.id;
+                    var arch = architects.Find(a => a.CanSupervise);
+                    if (arch != null) supervision.ArchitectId = arch.Id;
                 }
             }
         }
         private void FreeArchitects()
         {
-            List<Architect> archs = new List<Architect>();
-            var endingProjects = listOfProjects.FindAll(p => p.startDate >= p.clientOrderDate &&
-                p.endDate <= currentDate &&
-                p.status != ProjectStatusEnum.UKONCZONY
+            var architects = new List<Architect>();
+            var endingProjects = _listOfProjects.FindAll(p => p.StartDate >= p.ClientOrderDate &&
+                p.EndDate <= _currentDate &&
+                p.Status != ProjectStatusEnum.UKONCZONY
                 );
             if (endingProjects.Any())
             {
                 endingProjects.ForEach(p =>
                 {
-                    p.status = ProjectStatusEnum.UKONCZONY;
-                    switch (p.architectureType)
+                    p.Status = ProjectStatusEnum.UKONCZONY;
+                    switch (p.ArchitectureType)
                     {
                         case ArchitectureTypeEnum.OBIEKT_BIUROWY:
-                            projectsOB.RemoveAll(project => project.id == p.id);
+                            _projectsOb.RemoveAll(project => project.Id == p.Id);
                             break;
                         case ArchitectureTypeEnum.OBIEKT_MIESZKALNY:
-                            projectsOM.RemoveAll(project => project.id == p.id);
+                            _projectsOm.RemoveAll(project => project.Id == p.Id);
                             break;
                         case ArchitectureTypeEnum.OBIEKT_USLUGOWY:
-                            projectsOU.RemoveAll(project => project.id == p.id);
+                            _projectsOu.RemoveAll(project => project.Id == p.Id);
                             break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
                     }
                 });
-                List<int> ids = new List<int>();
-                listOfProjectsDone.FindAll(pd => endingProjects.Find(p => p.id == pd.projectId) != null)
+                _listOfProjectsDone.FindAll(pd => endingProjects.Find(p => p.Id == pd.ProjectId) != null)
                     .ForEach(pd =>
                     {
-                        var architect = listOfArchitects[pd.architectId].active
-                            ? listOfArchitects[pd.architectId]
-                            : listOfArchitects[mutatedArchitectsIdMapper.GetValueOrDefault(pd.architectId)];
-                        archs.Add(architect);
+                        var architect = _listOfArchitects[pd.ArchitectId].Active
+                            ? _listOfArchitects[pd.ArchitectId]
+                            : _listOfArchitects[_mutatedArchitectsIdMapper.GetValueOrDefault(pd.ArchitectId)];
+                        architects.Add(architect);
                     });
-                var overwatch = listOfOverwatches.Find(o => endingProjects.Find(p => p.id == o.projectId) != null);
-                if (overwatch != null)
+                var supervision = _listOfSupervisors.Find(o => endingProjects.Find(p => p.Id == o.ProjectId) != null);
+                if (supervision != null)
                 {
-                    var overwatcher = archs.Find(a => a.id == overwatch.architectId);
-                    if (overwatcher != null)
+                    var supervisor = architects.Find(a => a.Id == supervision.ArchitectId);
+                    if (supervisor != null)
                     {
-                        archs.Remove(overwatcher);
-                        overwatches--;
+                        architects.Remove(supervisor);
+                        _supervisions--;
                     }
                 }
             }
-            var endingOverwatches = listOfOverwatches.FindAll(o => o.endDate <= currentDate && o.endDate >= currentDate.AddDays(-1));
-            if (endingOverwatches.Any())
+            var endingSupervisions = _listOfSupervisors.FindAll(o => o.EndDate <= _currentDate && o.EndDate >= _currentDate.AddDays(-1));
+            if (endingSupervisions.Any())
             {
-                List<Architect> overwatchers = new List<Architect>();
-                endingOverwatches.ForEach(o =>
+                var supervisors = new List<Architect>();
+                endingSupervisions.ForEach(o =>
                 {
-                    var architect = listOfArchitects[o.architectId].active
-                        ? listOfArchitects[o.architectId]
-                        : listOfArchitects[mutatedArchitectsIdMapper.GetValueOrDefault(o.architectId)];
-                    overwatchers.Add(architect);
+                    var architect = _listOfArchitects[o.ArchitectId].Active
+                        ? _listOfArchitects[o.ArchitectId]
+                        : _listOfArchitects[_mutatedArchitectsIdMapper.GetValueOrDefault(o.ArchitectId)];
+                    supervisors.Add(architect);
                 });
-                archs.Concat(overwatchers);
+                architects = architects.Concat(supervisors).ToList();
             }
-            archs.ForEach(a =>
+            architects.ForEach(a =>
             {
-                switch (a.specialization)
+                switch (a.Specialization)
                 {
                     case ArchitectureTypeEnum.OBIEKT_BIUROWY:
-                        availableOBA.Add(a);
+                        _availableOba.Add(a);
                         break;
                     case ArchitectureTypeEnum.OBIEKT_MIESZKALNY:
-                        availableOMA.Add(a);
+                        _availableOma.Add(a);
                         break;
                     case ArchitectureTypeEnum.OBIEKT_USLUGOWY:
-                        availableOUA.Add(a);
+                        _availableOua.Add(a);
                         break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
             });
         }
         private void GenerateSimpleDataT0()
         {
-            for (int i = 0; i < t0clients; i++) listOfClients.Add(new Client(i));
-            for (int i = 0; i < t0architects; i++) listOfArchitects.Add(new Architect(i, currentDate, new DateTime(2999, 12, 31)));
-            for (int i = 0; i < t0outerSubjects; i++) listOfOuterSubjects.Add(new OuterSubject(i));
+            for (var i = 0; i < FirstPeriod.Clients; i++) _listOfClients.Add(new Client(i));
+            for (var i = 0; i < FirstPeriod.Architects; i++) _listOfArchitects.Add(new Architect(i, _currentDate, new DateTime(2999, 12, 31)));
+            for (var i = 0; i < FirstPeriod.OuterProjects; i++) _listOfOuterSubjects.Add(new OuterSubject(i));
             ShuffleArchitects();
             GenerateArchitectsInitialHierarchy();
         }
         private void GenerateSimpleDataT1()
         {
-            int numberOfarchitects = listOfArchitects.Count;
-            for (int i = t0clients; i < t0clients + t1clients; i++) listOfClients.Add(new Client(i));
-            for (int i = numberOfarchitects; i < t0architects + t1architects; i++) listOfArchitects.Add(new Architect(i, currentDate, new DateTime(2999, 12, 31)));
-            for (int i = t0outerSubjects; i < t0outerSubjects + t1outerSubjects; i++) listOfOuterSubjects.Add(new OuterSubject(i));
+            var numberOfArchitects = _listOfArchitects.Count;
+            for (var i = FirstPeriod.Clients; i < FirstPeriod.Clients + SecondPeriod.Clients; i++) _listOfClients.Add(new Client(i));
+            for (var i = numberOfArchitects; i < numberOfArchitects + SecondPeriod.Architects; i++) _listOfArchitects.Add(new Architect(i, _currentDate, new DateTime(2999, 12, 31)));
+            for (var i = FirstPeriod.OuterSubjects; i < FirstPeriod.OuterSubjects + SecondPeriod.OuterSubjects; i++) _listOfOuterSubjects.Add(new OuterSubject(i));
             ShuffleArchitects();
             GenerateArchitectsAfterHierarchy();
         }
-        private void GenerateComplexData(int dateRange, int numberOfProjects, int numberOfOverwatches, int numberOfOuterProjects, bool isFirstGeneration)
+        private void GenerateComplexData(int dateRange, int numberOfProjects, int numberOfSupervisions, int numberOfOuterProjects, bool isFirstGeneration)
         {
             GenerateProjects(isFirstGeneration, numberOfProjects, dateRange);
-            GenerateOverwatches(isFirstGeneration, numberOfOverwatches, numberOfProjects);
+            GenerateSupervisions(isFirstGeneration, numberOfSupervisions, numberOfProjects);
             GenerateOuterProjects(isFirstGeneration, numberOfOuterProjects);
         }
         private void GenerateProjects(bool isFirstGeneration, int count, int dateRange)
         {
-            var shift = isFirstGeneration ? 0 : t0projects;
-            for (int i = 0; i < count; i++)
+            var shift = isFirstGeneration ? 0 : FirstPeriod.Projects;
+            for (var i = 0; i < count; i++)
             {
-                DateTime clientOrderDate = currentDate.AddDays(rand.Next(dateRange));
-                Client client = listOfClients[rand.Next(listOfClients.Count)];
-                Project project = new Project(
+                var clientOrderDate = _currentDate.AddDays(_rand.Next(dateRange));
+                var client = _listOfClients[_rand.Next(_listOfClients.Count)];
+                var project = new Project(
                     i + shift,
                     clientOrderDate,
-                    client.id);
-                listOfProjects.Add(project);
-                switch (project.architectureType)
+                    client.Id);
+                _listOfProjects.Add(project);
+                switch (project.ArchitectureType)
                 {
                     case ArchitectureTypeEnum.OBIEKT_BIUROWY:
-                        projectsOB.Add(project);
+                        _projectsOb.Add(project);
                         break;
                     case ArchitectureTypeEnum.OBIEKT_MIESZKALNY:
-                        projectsOM.Add(project);
+                        _projectsOm.Add(project);
                         break;
                     case ArchitectureTypeEnum.OBIEKT_USLUGOWY:
-                        projectsOU.Add(project);
+                        _projectsOu.Add(project);
                         break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
             }
-            projectsOB = OrderListByStatusAndClientOrderDate(projectsOB);
-            projectsOM = OrderListByStatusAndClientOrderDate(projectsOM);
-            projectsOU = OrderListByStatusAndClientOrderDate(projectsOU);
+            _projectsOb = OrderListByStatusAndClientOrderDate(_projectsOb);
+            _projectsOm = OrderListByStatusAndClientOrderDate(_projectsOm);
+            _projectsOu = OrderListByStatusAndClientOrderDate(_projectsOu);
         }
-        private void GenerateOverwatches(bool isFirstGeneration, int count, int numberOfProjects)
+        private void GenerateSupervisions(bool isFirstGeneration, int count, int numberOfProjects)
         {
             var delta = count != 0 ? numberOfProjects / count : numberOfProjects;
-            int index = isFirstGeneration ? 0 : t0projects;
-            for (int i = isFirstGeneration ? 0 : t0overwatches; i < count; i++)
+            var index = isFirstGeneration ? 0 : FirstPeriod.Projects;
+            for (var i = isFirstGeneration ? 0 : FirstPeriod.Supervisions; i < count; i++)
             {
-                OuterSubject manager = listOfOuterSubjects[rand.Next(listOfOuterSubjects.Count)];
-                Project project = listOfProjects[index];
+                var manager = _listOfOuterSubjects[_rand.Next(_listOfOuterSubjects.Count)];
+                var project = _listOfProjects[index];
                 index += delta;
-                ProjectOverwatch overwatch = new ProjectOverwatch(i, manager.id, 0, project.id);
-                project.totalPrize = project.prize + overwatch.prize;
-                project.isOverwatched = true;
-                overwatch.updateLength();
-                listOfOverwatches.Add(overwatch);
+                var supervision = new ProjectSupervision(i, manager.Id, 0, project.Id);
+                project.TotalPrize = project.Prize + supervision.Prize;
+                project.IsSupervised = true;
+                supervision.Update();
+                _listOfSupervisors.Add(supervision);
             }
         }
         private void GenerateOuterProjects(bool isFirstGeneration, int count)
         {
-            var shift = isFirstGeneration ? 0 : t0outerProjects;
-            for (int i = 0; i < count; i++)
+            var shift = isFirstGeneration ? 0 : FirstPeriod.OuterProjects;
+            for (var i = 0; i < count; i++)
             {
-                Project project = listOfProjects[rand.Next(listOfProjects.Count)];
-                OuterSubject os = listOfOuterSubjects[rand.Next(listOfOuterSubjects.Count)];
-                listOfOuterProjects.Add(new OuterProject(i, os.id, project.id));
+                var project = _listOfProjects[_rand.Next(_listOfProjects.Count)];
+                var os = _listOfOuterSubjects[_rand.Next(_listOfOuterSubjects.Count)];
+                _listOfOuterProjects.Add(new OuterProject(i, os.Id, project.Id));
             }
         }
-        private List<Project> OrderListByStatusAndClientOrderDate(List<Project> list)
+        private static List<Project> OrderListByStatusAndClientOrderDate(IEnumerable<Project> list)
         {
-            return list.OrderBy(project => project.status).ThenBy(project => project.clientOrderDate).ToList();
+            return list.OrderBy(project => project.Status).ThenBy(project => project.ClientOrderDate).ToList();
         }
         private void MutateData()
         {
             MutateArchitectsSpecializations();
-            MutateArchitectsCanOverwatch();
+            MutateArchitectsCanSupervise();
         }
         private void MutateArchitectsSpecializations()
         {
-            var toMutate = rand.Next(1, 4);
-            List<Architect> architectsToMutate = ChooseArchitectsToMutate(toMutate);
-            List<Architect> mutatedArchitects = new List<Architect>();
-            // zmień specjalizacje wybranym architektom
-            architectsToMutate.ForEach(architect =>
-            {
-                Architect mutatedArchitect = architect.Copy();
-                architect.active = false;
-                architect.dataWygasniecia = currentDate;
-                mutatedArchitect.dataWstawienia = currentDate;
-                switch (mutatedArchitect.specialization)
-                {
-                    case ArchitectureTypeEnum.OBIEKT_BIUROWY:
-                        mutatedArchitect.specialization = rand.Next(2) == 0 ? ArchitectureTypeEnum.OBIEKT_MIESZKALNY : ArchitectureTypeEnum.OBIEKT_USLUGOWY;
-                        break;
-                    case ArchitectureTypeEnum.OBIEKT_MIESZKALNY:
-                        mutatedArchitect.specialization = rand.Next(2) == 0 ? ArchitectureTypeEnum.OBIEKT_BIUROWY : ArchitectureTypeEnum.OBIEKT_USLUGOWY;
-                        break;
-                    case ArchitectureTypeEnum.OBIEKT_USLUGOWY:
-                        mutatedArchitect.specialization = rand.Next(2) == 0 ? ArchitectureTypeEnum.OBIEKT_MIESZKALNY : ArchitectureTypeEnum.OBIEKT_BIUROWY;
-                        break;
-                }
-
-                mutatedArchitect.id = listOfArchitects.Count();
-                listOfArchitects.Add(mutatedArchitect);
-                mutatedArchitects.Add(mutatedArchitect);
-                mutatedArchitectsIdMapper.Add(architect.id, mutatedArchitect.id);
-            });
-            CreateSpecializatonUpdates(mutatedArchitects);
-            AddArchitectsToSpecializedGroups(mutatedArchitects);
-        }
-        private void MutateArchitectsCanOverwatch()
-        {
-            var toMutate = rand.Next(1,4);
+            var toMutate = _rand.Next(1, 4);
             var architectsToMutate = ChooseArchitectsToMutate(toMutate);
             var mutatedArchitects = new List<Architect>();
             architectsToMutate.ForEach(architect =>
             {
                 var mutatedArchitect = architect.Copy();
-                architect.active = false;
-                architect.dataWygasniecia = currentDate;
-                mutatedArchitect.canOverwatch = !mutatedArchitect.canOverwatch;
-                mutatedArchitect.dataWstawienia = currentDate;
-                mutatedArchitect.id = listOfArchitects.Count();
+                architect.Active = false;
+                architect.ExpirationDate = _currentDate;
+                mutatedArchitect.InsertDate = _currentDate;
+                mutatedArchitect.Specialization = mutatedArchitect.Specialization switch
+                {
+                    ArchitectureTypeEnum.OBIEKT_BIUROWY => (_rand.Next(2) == 0
+                        ? ArchitectureTypeEnum.OBIEKT_MIESZKALNY
+                        : ArchitectureTypeEnum.OBIEKT_USLUGOWY),
+                    ArchitectureTypeEnum.OBIEKT_MIESZKALNY => (_rand.Next(2) == 0
+                        ? ArchitectureTypeEnum.OBIEKT_BIUROWY
+                        : ArchitectureTypeEnum.OBIEKT_USLUGOWY),
+                    ArchitectureTypeEnum.OBIEKT_USLUGOWY => (_rand.Next(2) == 0
+                        ? ArchitectureTypeEnum.OBIEKT_MIESZKALNY
+                        : ArchitectureTypeEnum.OBIEKT_BIUROWY),
+                    _ => throw new ArgumentOutOfRangeException()
+                };
+
+                mutatedArchitect.Id = _listOfArchitects.Count();
+                _listOfArchitects.Add(mutatedArchitect);
                 mutatedArchitects.Add(mutatedArchitect);
-                listOfArchitects.Add(mutatedArchitect);
-                mutatedArchitectsIdMapper.Add(architect.id, mutatedArchitect.id);
+                _mutatedArchitectsIdMapper.Add(architect.Id, mutatedArchitect.Id);
             });
-            CreateOverwatchUpdates(mutatedArchitects);
+            CreateSpecializationUpdates(mutatedArchitects);
+            AddArchitectsToSpecializedGroups(mutatedArchitects);
+        }
+        private void MutateArchitectsCanSupervise()
+        {
+            var toMutate = _rand.Next(1, 4);
+            var architectsToMutate = ChooseArchitectsToMutate(toMutate);
+            architectsToMutate.ForEach(architect =>
+            {
+                var mutatedArchitect = architect.Copy();
+                architect.Active = false;
+                architect.ExpirationDate = _currentDate;
+                mutatedArchitect.CanSupervise = !mutatedArchitect.CanSupervise;
+                mutatedArchitect.InsertDate = _currentDate;
+                mutatedArchitect.Id = _listOfArchitects.Count();
+                _listOfArchitects.Add(mutatedArchitect);
+                _mutatedArchitectsIdMapper.Add(architect.Id, mutatedArchitect.Id);
+            });
         }
         private List<Architect> ChooseArchitectsToMutate(int toMutate)
         {
             var architectsToMutate = new List<Architect>();
-            for (int i = 0; i < toMutate; i++)
+            for (var i = 0; i < toMutate; i++)
             {
                 switch (RandomValueGenerator.GetEnumRandomValue<ArchitectureTypeEnum>())
                 {
                     case ArchitectureTypeEnum.OBIEKT_BIUROWY:
-                        if (availableOBA.Any())
+                        if (_availableOba.Any())
                         {
-                            architectsToMutate.Add(availableOBA[0]);
-                            availableOBA.RemoveAt(0);
+                            architectsToMutate.Add(_availableOba[0]);
+                            _availableOba.RemoveAt(0);
                         }
                         break;
                     case ArchitectureTypeEnum.OBIEKT_MIESZKALNY:
-                        if (availableOMA.Any())
+                        if (_availableOma.Any())
                         {
-                            architectsToMutate.Add(availableOMA[0]);
-                            availableOMA.RemoveAt(0);
+                            architectsToMutate.Add(_availableOma[0]);
+                            _availableOma.RemoveAt(0);
                         }
                         break;
                     case ArchitectureTypeEnum.OBIEKT_USLUGOWY:
-                        if (availableOUA.Any())
+                        if (_availableOua.Any())
                         {
-                            architectsToMutate.Add(availableOUA[0]);
-                            availableOUA.RemoveAt(0);
+                            architectsToMutate.Add(_availableOua[0]);
+                            _availableOua.RemoveAt(0);
                         }
                         break;
                 }
@@ -410,57 +464,59 @@ namespace StudioArchitektoniczne
         {
             architects.ForEach(architect =>
             {
-                switch (architect.specialization)
+                switch (architect.Specialization)
                 {
                     case ArchitectureTypeEnum.OBIEKT_BIUROWY:
-                        availableOBA.Add(architect);
+                        _availableOba.Add(architect);
                         break;
                     case ArchitectureTypeEnum.OBIEKT_MIESZKALNY:
-                        availableOMA.Add(architect);
+                        _availableOma.Add(architect);
                         break;
                     case ArchitectureTypeEnum.OBIEKT_USLUGOWY:
-                        availableOUA.Add(architect);
+                        _availableOua.Add(architect);
                         break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
             });
         }
         private void ShuffleArchitects()
         {
-            availableOBA = listOfArchitects.FindAll(a => a.specialization == ArchitectureTypeEnum.OBIEKT_BIUROWY);
-            availableOMA = listOfArchitects.FindAll(a => a.specialization == ArchitectureTypeEnum.OBIEKT_MIESZKALNY);
-            availableOUA = listOfArchitects.FindAll(a => a.specialization == ArchitectureTypeEnum.OBIEKT_USLUGOWY);
-            availableOBA = Shuffle(availableOBA);
-            availableOMA = Shuffle(availableOMA);
-            availableOUA = Shuffle(availableOUA);
+            _availableOba = _listOfArchitects.FindAll(a => a.Specialization == ArchitectureTypeEnum.OBIEKT_BIUROWY);
+            _availableOma = _listOfArchitects.FindAll(a => a.Specialization == ArchitectureTypeEnum.OBIEKT_MIESZKALNY);
+            _availableOua = _listOfArchitects.FindAll(a => a.Specialization == ArchitectureTypeEnum.OBIEKT_USLUGOWY);
+            _availableOba = Shuffle(_availableOba);
+            _availableOma = Shuffle(_availableOma);
+            _availableOua = Shuffle(_availableOua);
         }
 
         private void GenerateArchitectsInitialHierarchy()
         {
-            var ordered = listOfArchitects.OrderByDescending(a => a.pesel).ToList();
-            ordered.ForEach(a => a.idPrzelozonego = (int) Math.Floor((double) (a.id - 1) / 10));
-            lastArchitect = ordered.Last().id;
+            var ordered = _listOfArchitects.OrderByDescending(a => a.Pesel).ToList();
+            ordered.ForEach(a => a.PrincipalId = (int)Math.Floor((double)(a.Id - 1) / 10));
+            _lastArchitect = ordered.Last().Id;
         }
 
         private void GenerateArchitectsAfterHierarchy()
         {
-            var ordered = listOfArchitects.FindAll(a => a.idPrzelozonego == -2).OrderByDescending(a => a.pesel).ToList();
-            ordered.ForEach(a => a.idPrzelozonego = lastArchitect + (int)Math.Floor((double)(a.id - 1) / 10));
+            var ordered = _listOfArchitects.FindAll(a => a.PrincipalId == -2).OrderByDescending(a => a.Pesel).ToList();
+            ordered.ForEach(a => a.PrincipalId = _lastArchitect + (int)Math.Floor((double)(a.Id - 1) / 10));
         }
 
         private void GenerateArchitectsAfterHierarchy(List<Architect> list, int groupSupervisor)
         {
-            var ordered = list.FindAll(a => a.idPrzelozonego == -2).OrderByDescending(a => a.pesel).ToList();
-            ordered.ForEach(a => a.idPrzelozonego = groupSupervisor + (int)Math.Floor((double)(a.id - 1) / 10));
+            var ordered = list.FindAll(a => a.PrincipalId == -2).OrderByDescending(a => a.Pesel).ToList();
+            ordered.ForEach(a => a.PrincipalId = groupSupervisor + (int)Math.Floor((double)(a.Id - 1) / 10));
         }
         private static List<T> Shuffle<T>(List<T> list)
         {
-            Random rand = new Random(2137);
-            int n = list.Count;
+            var rand = new Random(2137);
+            var n = list.Count;
             while (n > 1)
             {
                 n--;
-                int k = rand.Next(n + 1);
-                T value = list[k];
+                var k = rand.Next(n + 1);
+                var value = list[k];
                 list[k] = list[n];
                 list[n] = value;
             }
@@ -469,87 +525,87 @@ namespace StudioArchitektoniczne
 
         private void WriteToFiles(string time)
         {
-            string path = "../../../data/";
+            const string path = "../../../data/";
 
             CreateCsvHeaders(path, time);
 
-            List<DataModel> tmp;
-            tmp = listOfArchitects.Cast<DataModel>().ToList();
+            var tmp = new List<DataModel>();
+            tmp = _listOfArchitects.Cast<DataModel>().ToList();
             WriteToCsv(tmp, path + "architects_" + time + ".csv");
             tmp.Clear();
 
-            tmp = listOfOuterProjects.Cast<DataModel>().ToList();
+            tmp = _listOfOuterProjects.Cast<DataModel>().ToList();
             WriteToCsv(tmp, path + "outer_projects_" + time + ".csv");
             tmp.Clear();
 
-            tmp = listOfOuterSubjects.Cast<DataModel>().ToList();
+            tmp = _listOfOuterSubjects.Cast<DataModel>().ToList();
             WriteToCsv(tmp, path + "outer_subjects_" + time + ".csv");
             tmp.Clear();
 
-            tmp = listOfArchitects.Cast<DataModel>().ToList();
+            tmp = _listOfArchitects.Cast<DataModel>().ToList();
             WriteToBulk(tmp, path + "architects_" + time + ".bulk");
             tmp.Clear();
 
-            tmp = listOfClients.Cast<DataModel>().ToList();
+            tmp = _listOfClients.Cast<DataModel>().ToList();
             WriteToBulk(tmp, path + "clients_" + time + ".bulk");
             tmp.Clear();
 
-            tmp = listOfProjects.Cast<DataModel>().ToList();
+            tmp = _listOfProjects.Cast<DataModel>().ToList();
             WriteToBulk(tmp, path + "projects_" + time + ".bulk");
             tmp.Clear();
 
-            tmp = listOfProjectsDone.Cast<DataModel>().ToList();
+            tmp = _listOfProjectsDone.Cast<DataModel>().ToList();
             WriteToBulk(tmp, path + "projects_done_" + time + ".bulk");
             tmp.Clear();
 
-            tmp = listOfOverwatches.Cast<DataModel>().ToList();
-            WriteToBulk(tmp, path + "project_overwatches_" + time + ".bulk");
+            tmp = _listOfSupervisors.Cast<DataModel>().ToList();
+            WriteToBulk(tmp, path + "project_supervisions_" + time + ".bulk");
             tmp.Clear();
         }
 
-        private void CreateCsvHeaders(string path, string time)
+        private static void CreateCsvHeaders(string path, string time)
         {
-            File.WriteAllText(path + "outer_subjects_" + time + ".csv", "Identyfikator podmiotu,Imię,Nazwisko,Numer telefonu,\n", Encoding.UTF8);
-            File.WriteAllText(path + "outer_projects_" + time + ".csv", "Identyfikator projektu,Nazwa projektu,Identyfikator podmiotu,Rodzaj projektu,Koszt,Data rozpoczęcia,Data zakończenia,Identyfikator projektu architektonicznego,\n", Encoding.UTF8);
-            File.WriteAllText(path + "architects_" + time + ".csv", "Identyfikator pracownika,Imię,Nazwisko,Data urodzenia,Telefon,Identyfikator kontraktu,Uprawnienia do nadzoru,Pesel\n", Encoding.UTF8);
+            File.WriteAllText(GetFileName(path, "outer_subjects", time, "csv"), Resources.Generator_OuterSubjects_Csv_Header, Encoding.UTF8);
+            File.WriteAllText(GetFileName(path, "outer_projects", time, "csv"), Resources.Generator_OuterProjects_Csv_Header, Encoding.UTF8);
+            File.WriteAllText(GetFileName(path, "architects", time, "csv"), Resources.Generator_Architects_Csv_Header, Encoding.UTF8);
+        }
+
+        private static string GetFileName(string path, string fileName, string time, string extension)
+        {
+            return $"{path}{fileName}_{time}.{extension}";
         }
 
 
-        private void WriteToCsv(List<DataModel> list, String filename)
+        private static void WriteToCsv(List<DataModel> list, string filename)
         {
             var text = new StringBuilder();
-            for (int i = 0; i < list.Count; i++) text.AppendLine(((DataModel)list[i]).ToCsvString());
+            list.ForEach(element => text.AppendLine(element.ToCsv()));
             File.AppendAllText(filename, text.ToString(), Encoding.UTF8);
         }
 
-        private void WriteToBulk(List<DataModel> list, String filename)
+        private static void WriteToBulk(List<DataModel> list, string filename)
         {
             var text = new StringBuilder();
-            for (int i = 0; i < list.Count; i++) text.AppendLine(((DataModel)list[i]).ToBulkString());
-            File.AppendAllText(filename, text.ToString(), Encoding.GetEncoding("UTF-16"));
+            list.ForEach(element => text.AppendLine(element.ToBulk()));
+            File.AppendAllText(filename, text.ToString(), Encoding.UTF8);
         }
 
-        private void CreateOverwatchUpdates(List<Architect> architects)
+        private void CreateSpecializationUpdates(List<Architect> architects)
         {
-
-        }
-
-        private void CreateSpecializatonUpdates(List<Architect> architects)
-        {
-            foreach (var architect in architects)
+            architects.ForEach(architect =>
             {
-                var id = listOfArchitects.FindIndex(a => a.active == false && a.pesel == architect.pesel);
-                listOfUpdates.Add(String.Format("UPDATE Pracownicy SET Specjalizacja='{0}' WHERE ID_PRACOWNIK={1}", architect.specialization.ToString(), id));
-            }
+                var id = _listOfArchitects.FindIndex(a => a.Active == false && a.Pesel == architect.Pesel);
+                _listOfUpdates.Add($"UPDATE Pracownicy SET Specjalizacja='{architect.Specialization.ToString()}' WHERE ID_PRACOWNIK={id}");
+            });
         }
 
         private void WriteUpdatesToFiles(string time)
         {
-            string path = "../../../data/";
+            const string path = "../../../data/";
 
             var text = new StringBuilder();
-            foreach (var update in listOfUpdates) text.AppendLine(update.ToString());
-            File.AppendAllText(path + "architects_update_" + time + ".sql", text.ToString(), Encoding.GetEncoding("UTF-16"));
+            _listOfUpdates.ForEach(update => text.AppendLine(update));
+            File.AppendAllText(GetFileName(path, "architects_update", time, "sql"), text.ToString(), Encoding.UTF8);
         }
     }
 }

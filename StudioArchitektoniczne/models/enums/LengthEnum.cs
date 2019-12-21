@@ -1,6 +1,6 @@
-﻿namespace StudioArchitektoniczne.models.enums
+﻿namespace ArchitecturalStudio.models.enums
 {
-    enum LengthEnum
+    public enum LengthEnum
     {
         BARDZO_KROTKI,
         KROTKI,

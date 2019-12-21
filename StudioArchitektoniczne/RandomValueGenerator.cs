@@ -1,13 +1,13 @@
-﻿using StudioArchitektoniczne.models;
-using StudioArchitektoniczne.models.enums;
-using StudioArchitektoniczne.models.enums.company;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Linq;
+using ArchitecturalStudio.models;
+using ArchitecturalStudio.models.enums;
+using ArchitecturalStudio.models.enums.company;
 
-namespace StudioArchitektoniczne
+namespace ArchitecturalStudio
 {
-    class RandomValueGenerator
+    public class RandomValueGenerator
     {
         public static T GetEnumRandomValue<T>()
         {
@@ -31,14 +31,14 @@ namespace StudioArchitektoniczne
 
         public static string GetRandomEmail(Client client)
         {
-            string email = client.companyName.Any() ? client.companyName : $"{client.name}.{client.surname}";
+            string email = client.CompanyName.Any() ? client.CompanyName : $"{client.Name}.{client.Surname}";
             email += $"@{GetEnumDescription(GetEnumRandomValue<DomainsEnum>())}";
             return email.ToLower();
         }
 
         public static string GetRandomCompanyName(Client client)
         {
-            return $"{client.name.Substring(0, 3).ToString()}{client.surname.Substring(0, 3).ToString()}{GetEnumDescription(RandomValueGenerator.GetEnumRandomValue<CompanyMidNameEnum>())}";
+            return $"{client.Name.Substring(0, 3).ToString()}{client.Surname.Substring(0, 3).ToString()}{GetEnumDescription(RandomValueGenerator.GetEnumRandomValue<CompanyMidNameEnum>())}";
         }
 
         private static string GetEnumDescription(Enum value)

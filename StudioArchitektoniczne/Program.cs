@@ -1,81 +1,52 @@
 ﻿using System;
+using ArchitecturalStudio.models;
+using ArchitecturalStudio.models.enums;
+using ArchitecturalStudio.Properties;
 
-namespace StudioArchitektoniczne
+namespace ArchitecturalStudio
 {
-    class Program
+    public class Program
     {
 
-        static void Main(string[] args)
+        public static void Main()
         { 
-            Generator generator = MalyGenerator();
+            var generator = new Generator(GeneratorSize.SMALL);
             generator.GenerateData();
-            var counter = generator.CountGeneratedRecords();
-            return;
         }
     
         private static Generator CustomGenerator()
-        {
-            Console.WriteLine("Witaj w generatorze danych do studia architektonicznego!");
-            Console.WriteLine("Zacznijmy do okresu t0-t1:");
-            Console.WriteLine("Ilu klientów ma zostać wygenerowanych?");
-            int t0clients = int.Parse(Console.ReadLine());
-            Console.WriteLine("Ilu architektów ma zostać wygenerowanych?");
-            int t0architects = int.Parse(Console.ReadLine());
-            Console.WriteLine("Ile projektów ma zostać wygenerowanych?");
-            int t0projects = int.Parse(Console.ReadLine());
-            Console.WriteLine("Ile nadzorów ma zostać wygenerowanych?");
-            int t0overwatches = int.Parse(Console.ReadLine());
-            Console.WriteLine("Ile zewnętrznych podmiotów ma zostać wygenerowanych?");
-            int t0outerSubjects = int.Parse(Console.ReadLine());
-            Console.WriteLine("Ile zewnętrznych projektów ma zostać wygenerowanych?");
-            int t0outerProjects = int.Parse(Console.ReadLine());
-            Console.WriteLine("=====================================");
-            Console.WriteLine("Przejdźmy do okresu t1-t2:");
-            Console.WriteLine("Ilu klientów ma zostać wygenerowanych?");
-            int t1clients = int.Parse(Console.ReadLine());
-            Console.WriteLine("Ilu architektów ma zostać wygenerowanych?");
-            int t1architects = int.Parse(Console.ReadLine());
-            Console.WriteLine("Ile projektów ma zostać wygenerowanych?");
-            int t1projects = int.Parse(Console.ReadLine());
-            Console.WriteLine("Ile nadzorów ma zostać wygenerowanych?");
-            int t1overwatches = int.Parse(Console.ReadLine());
-            Console.WriteLine("Ile zewnętrznych podmiotów ma zostać wygenerowanych?");
-            int t1outerSubjects = int.Parse(Console.ReadLine());
-            Console.WriteLine("Ile zewnętrznych projektów ma zostać wygenerowanych?");
-            int t1outerProjects = int.Parse(Console.ReadLine());
-            Console.WriteLine("====================================");
-            Console.WriteLine("Teraz zostaną wygenerowane dane. Proszę czekać");
-            return new Generator(t0clients, t0architects, t0projects, t0overwatches, t0outerProjects, t0outerSubjects,
-                                 t1clients, t1architects, t1projects, t1overwatches, t1outerProjects, t1outerSubjects);
+        { 
+            Console.WriteLine(Resources.Program_CustomGenerator_Witaj_w_generatorze_danych_do_studia_architektonicznego_);
+
+            Console.WriteLine(Resources.Program_CustomGenerator_Zacznijmy_do_okresu_t0_t1_);
+            var firstPeriod = CreateGeneratorParameters();
+            
+            Console.WriteLine(Resources.Program_CustomGenerator_Przejdźmy_do_okresu_t1_t2_);
+            var secondPeriod = CreateGeneratorParameters();
+
+            Console.WriteLine(Resources.Program_CustomGenerator_Teraz_zostaną_wygenerowane_dane__Proszę_czekać);
+            return new Generator(firstPeriod, secondPeriod);
         }
 
-        private static Generator MalyGenerator()
+        private static GeneratorParameters CreateGeneratorParameters()
         {
-            return new Generator(10,100,200,10,10,10,10,100,100,10,10,10);
+            var parameters = new GeneratorParameters
+            {
+                Clients = ReadInput(Resources.Program_CustomGenerator_Ilu_klientów_ma_zostać_wygenerowanych_),
+                Architects = ReadInput(Resources.Program_CustomGenerator_Ilu_architektów_ma_zostać_wygenerowanych_),
+                Projects = ReadInput(Resources.Program_CustomGenerator_Ile_projektów_ma_zostać_wygenerowanych_),
+                Supervisions = ReadInput(Resources.Program_CustomGenerator_Ile_nadzorów_ma_zostać_wygenerowanych_),
+                OuterProjects = ReadInput(Resources.Program_CustomGenerator_Ile_zewnętrznych_podmiotów_ma_zostać_wygenerowanych_),
+                OuterSubjects = ReadInput(Resources.Program_CustomGenerator_Ile_zewnętrznych_projektów_ma_zostać_wygenerowanych_)
+            };
+            Console.WriteLine(Resources.Program_CustomGenerator_BreakLine);
+            return parameters;
         }
 
-        private static Generator Generator100k()
+        private static int ReadInput(string message)
         {
-            return new Generator(200, 30000, 10000, 2000, 2000, 200, 100, 15000, 10000, 1000, 1000, 100);
-        }
-
-        private static Generator Generator200k()
-        {
-            return new Generator(400, 60000, 20000, 4000, 4000, 400, 200, 30000, 10000, 2000, 2000, 200);
-        }
-
-        private static Generator Generator300k()
-        {
-            return new Generator(600, 90000, 30000, 6000, 6000, 600, 300, 45000, 15000, 3000, 3000, 300);
-        }
-
-        private static Generator Generator500k()
-        {
-            return new Generator(1000, 150000, 50000, 10000, 10000, 1000, 500, 75000, 25000, 5000, 5000, 500);
-        }
-        private static Generator Generator1kk()
-        {
-            return new Generator(2000, 300000, 100000, 20000, 20000, 2000, 1000, 150000, 100000, 10000, 10000, 1000);
+            Console.WriteLine(message);
+            return int.Parse(Console.ReadLine() ?? throw new InvalidOperationException());
         }
     }
 

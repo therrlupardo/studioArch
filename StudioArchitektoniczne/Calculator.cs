@@ -1,50 +1,38 @@
-﻿using StudioArchitektoniczne.models.enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
+using ArchitecturalStudio.models.enums;
 
-namespace StudioArchitektoniczne
+namespace ArchitecturalStudio
 {
-    static class Calculator
+    public static class Calculator
     {
-        public static Decimal CalculateProjectCost(DateTime start, DateTime end, ArchitectureTypeEnum type)
+        public static decimal CalculateProjectCost(DateTime start, DateTime end, ArchitectureTypeEnum type)
         {
             var time = (end - start).Days;
-            switch (type)
+            return type switch
             {
-
-                case ArchitectureTypeEnum.OBIEKT_BIUROWY:
-                    return 4500 * time;
-                case ArchitectureTypeEnum.OBIEKT_MIESZKALNY:
-                    return 6000 * time;
-                case ArchitectureTypeEnum.OBIEKT_USLUGOWY:
-                    return 10000 * time;
-                default: return 0;
-            }
+                ArchitectureTypeEnum.OBIEKT_BIUROWY => (4500 * time),
+                ArchitectureTypeEnum.OBIEKT_MIESZKALNY => (6000 * time),
+                ArchitectureTypeEnum.OBIEKT_USLUGOWY => (10000 * time),
+                _ => 0
+            };
         }
 
-        public static Decimal CalculateOuterProjectCost(DateTime start, DateTime end, OuterProjectType type)
+        public static decimal CalculateOuterProjectCost(DateTime start, DateTime end, OuterProjectType type)
         {
             var time = (end - start).Days;
-            switch (type)
+            return type switch
             {
-                case OuterProjectType.ALARMOWY:
-                    return 50 * time;
-                case OuterProjectType.ELEKTRYCZNY:
-                    return 75 * time;
-                case OuterProjectType.GRZEWCZY:
-                    return 80 * time;
-                case OuterProjectType.OGRODNICZY:
-                    return 25 * time;
-                case OuterProjectType.PRZECIWGROMOWY:
-                    return 35 * time;
-                case OuterProjectType.WODOCIĄGOWY:
-                    return 55 * time;
-                default: return 0;
-            }
+                OuterProjectType.ALARMOWY => (50 * time),
+                OuterProjectType.ELEKTRYCZNY => (75 * time),
+                OuterProjectType.GRZEWCZY => (80 * time),
+                OuterProjectType.OGRODNICZY => (25 * time),
+                OuterProjectType.PRZECIWGROMOWY => (35 * time),
+                OuterProjectType.WODOCIĄGOWY => (55 * time),
+                _ => 0
+            };
         }
 
-        public static Decimal CalculateOverwatchCost(DateTime start, DateTime end)
+        public static decimal CalculateSupervisionCost(DateTime start, DateTime end)
         {
             return (end - start).Days * 1500;
         }
