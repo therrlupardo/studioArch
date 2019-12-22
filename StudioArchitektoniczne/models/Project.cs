@@ -3,7 +3,7 @@ using ArchitecturalStudio.models.enums;
 
 namespace ArchitecturalStudio.models
 {
-    public class Project : DataModel
+    public class Project : AbstractDataModel
     {
 
         private const string Supervised = "NADZOROWANO";

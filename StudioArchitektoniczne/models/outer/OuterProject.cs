@@ -3,7 +3,7 @@ using ArchitecturalStudio.models.enums;
 
 namespace ArchitecturalStudio.models.outer
 {
-    public class OuterProject : DataModel
+    public class OuterProject : AbstractDataModel
     {
         public OuterProject(int id, int subjectId, int projectId)
         {

@@ -61,7 +61,7 @@ namespace ArchitecturalStudio.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Identyfikator pracownika,Imię,Nazwisko,Data urodzenia,Telefon,Identyfikator kontraktu,Uprawnienia do nadzoru,Pesel\n.
+        ///   Looks up a localized string similar to Identyfikator pracownika,Imię,Nazwisko,Data urodzenia,Telefon,Identyfikator kontraktu,Uprawnienia do nadzoru,Pesel.
         /// </summary>
         internal static string Generator_Architects_Csv_Header {
             get {
@@ -70,7 +70,7 @@ namespace ArchitecturalStudio.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Identyfikator projektu,Nazwa projektu,Identyfikator podmiotu,Rodzaj projektu,Koszt,Data rozpoczęcia,Data zakończenia,Identyfikator projektu architektonicznego\n.
+        ///   Looks up a localized string similar to Identyfikator projektu,Nazwa projektu,Identyfikator podmiotu,Rodzaj projektu,Koszt,Data rozpoczęcia,Data zakończenia,Identyfikator projektu architektonicznego.
         /// </summary>
         internal static string Generator_OuterProjects_Csv_Header {
             get {
@@ -79,11 +79,29 @@ namespace ArchitecturalStudio.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Identyfikator podmiotu,Imię,Nazwisko,Numer telefonu\n.
+        ///   Looks up a localized string similar to Identyfikator podmiotu,Imię,Nazwisko,Numer telefonu.
         /// </summary>
         internal static string Generator_OuterSubjects_Csv_Header {
             get {
                 return ResourceManager.GetString("Generator_OuterSubjects_Csv_Header", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ../../../data/.
+        /// </summary>
+        internal static string Global_Data_Path {
+            get {
+                return ResourceManager.GetString("Global_Data_Path", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 2137.
+        /// </summary>
+        internal static string Global_Random_Seed {
+            get {
+                return ResourceManager.GetString("Global_Random_Seed", resourceCulture);
             }
         }
         

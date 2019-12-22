@@ -3,7 +3,7 @@ using ArchitecturalStudio.models.enums;
 
 namespace ArchitecturalStudio.models
 {
-    public class ProjectSupervision : DataModel
+    public class ProjectSupervision : AbstractDataModel
     {
         public ProjectSupervision(int id, int managerId, int architectId, int projectId)
         {

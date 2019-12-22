@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Globalization;
-using ArchitecturalStudio.models.interfaces;
+using ArchitecturalStudio.interfaces;
 using static System.DateTime;
 
 namespace ArchitecturalStudio.models
 {
-    public abstract class  DataModel: IBulkConverter, ICsvConverter
+    public abstract class  AbstractDataModel: IBulkConverter, ICsvConverter
     {
         public virtual string ToCsv()
         {

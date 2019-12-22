@@ -3,7 +3,7 @@ using ArchitecturalStudio.models.enums;
 
 namespace ArchitecturalStudio.models
 {
-    public class Architect : DataModel
+    public class Architect : AbstractDataModel
     {
         private const string Authorized = "UPRAWNIONY";
         private const string Unauthorized = "NIEUPRAWNIONY";
@@ -50,6 +50,11 @@ namespace ArchitecturalStudio.models
             return CanSupervise ? Authorized : Unauthorized;
         }
 
+        private string PrincipalToString()
+        {
+            return PrincipalId == -1 ? "" : PrincipalId.ToString();
+        }
+
         public override string ToCsv()
         {
             return $"{Id},{Name},{Surname},{ConvertDate(BirthDate)},{Phone},{ContractId},{CanSuperviseToString()},{Pesel}";
@@ -57,12 +62,12 @@ namespace ArchitecturalStudio.models
 
         public override string ToBulk()
         {
-            return $"{Id}|{Specialization}|{PrincipalId}";
+            return $"{Id}|{Specialization}|{PrincipalToString()}";
         }
 
         public Architect Copy()
         {
-            return new Architect
+            var architect = new Architect
             {
                 Id = Id,
                 Active = Active,
@@ -78,6 +83,7 @@ namespace ArchitecturalStudio.models
                 BirthDate = BirthDate,
                 Phone = Phone
             };
+            return architect;
         }
     }
 }

@@ -151,12 +151,18 @@
     <value>Teraz zostaną wygenerowane dane. Proszę czekać</value>
   </data>
   <data name="Generator_Architects_Csv_Header" xml:space="preserve">
-    <value>Identyfikator pracownika,Imię,Nazwisko,Data urodzenia,Telefon,Identyfikator kontraktu,Uprawnienia do nadzoru,Pesel\n</value>
+    <value>Identyfikator pracownika,Imię,Nazwisko,Data urodzenia,Telefon,Identyfikator kontraktu,Uprawnienia do nadzoru,Pesel</value>
   </data>
   <data name="Generator_OuterProjects_Csv_Header" xml:space="preserve">
-    <value>Identyfikator projektu,Nazwa projektu,Identyfikator podmiotu,Rodzaj projektu,Koszt,Data rozpoczęcia,Data zakończenia,Identyfikator projektu architektonicznego\n</value>
+    <value>Identyfikator projektu,Nazwa projektu,Identyfikator podmiotu,Rodzaj projektu,Koszt,Data rozpoczęcia,Data zakończenia,Identyfikator projektu architektonicznego</value>
   </data>
-  <data name="Generator_OuterSubject_Csv_Header" xml:space="preserve">
-    <value>Identyfikator podmiotu,Imię,Nazwisko,Numer telefonu\n</value>
+  <data name="Generator_OuterSubjects_Csv_Header" xml:space="preserve">
+    <value>Identyfikator podmiotu,Imię,Nazwisko,Numer telefonu</value>
+  </data>
+  <data name="Global_Data_Path" xml:space="preserve">
+    <value>../../../data/</value>
+  </data>
+  <data name="Global_Random_Seed" xml:space="preserve">
+    <value>2137</value>
   </data>
 </root>

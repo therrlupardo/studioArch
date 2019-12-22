@@ -3,7 +3,7 @@ using ArchitecturalStudio.models.enums;
 
 namespace ArchitecturalStudio.models
 {
-    public class Client : DataModel
+    public class Client : AbstractDataModel
     {
         public Client(int id)
         {

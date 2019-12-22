@@ -1,4 +1,4 @@
-﻿namespace ArchitecturalStudio.models.interfaces
+﻿namespace ArchitecturalStudio.interfaces
 {
     public interface IBulkConverter
     {
