@@ -17,11 +17,9 @@ namespace ArchitecturalStudio
         private Random _rand;
         private DateTime _currentDate = new DateTime(2010, 1, 1);
         private int _supervisions = 0;
-        private readonly List<Client> _listOfClients = new List<Client>();
         private readonly List<Project> _listOfProjects = new List<Project>();
         private readonly List<ProjectSupervision> _listOfSupervisors = new List<ProjectSupervision>();
         private readonly List<OuterProject> _listOfOuterProjects = new List<OuterProject>();
-        private readonly List<OuterSubject> _listOfOuterSubjects = new List<OuterSubject>();
         private readonly List<ProjectDone> _listOfProjectsDone = new List<ProjectDone>();
 
         private List<Project> _projectsOm = new List<Project>();
@@ -29,11 +27,11 @@ namespace ArchitecturalStudio
         private List<Project> _projectsOb = new List<Project>();
         
         private readonly Dictionary<int, int> _mutatedArchitectsIdMapper = new Dictionary<int, int>();
-        private int _lastArchitect;
         private readonly List<string> _listOfUpdates = new List<string>();
 
         private readonly ArchitectHandler _architectHandler = new ArchitectHandler();
-
+        private readonly ClientHandler _clientHandler = new ClientHandler();
+        private readonly OuterSubjectHandler _outerSubjectHandler = new OuterSubjectHandler();
         public void InitGenerator(GeneratorParameters firstPeriod, GeneratorParameters secondPeriod)
         {
             _rand = new Random(2137);
@@ -268,15 +266,15 @@ namespace ArchitecturalStudio
         }
         private void GenerateSimpleDataT0()
         {
-            for (var i = 0; i < _firstPeriod.Clients; i++) _listOfClients.Add(new Client(i));
+            _clientHandler.Generate(_firstPeriod.Clients, _currentDate);
             _architectHandler.Generate(_firstPeriod.Architects, _currentDate);
-            for (var i = 0; i < _firstPeriod.OuterProjects; i++) _listOfOuterSubjects.Add(new OuterSubject(i));
+            _outerSubjectHandler.Generate(_firstPeriod.Clients, _currentDate);
         }
         private void GenerateSimpleDataT1()
         {
-            for (var i = _firstPeriod.Clients; i < _firstPeriod.Clients + _secondPeriod.Clients; i++) _listOfClients.Add(new Client(i));
+            _clientHandler.Generate(_secondPeriod.Clients, _currentDate);
             _architectHandler.Generate(_secondPeriod.Architects, _currentDate);
-            for (var i = _firstPeriod.OuterSubjects; i < _firstPeriod.OuterSubjects + _secondPeriod.OuterSubjects; i++) _listOfOuterSubjects.Add(new OuterSubject(i));
+            _outerSubjectHandler.Generate(_secondPeriod.Clients, _currentDate);
         }
         private void GenerateComplexData(int dateRange, int numberOfProjects, int numberOfSupervisions, int numberOfOuterProjects, bool isFirstGeneration)
         {
@@ -290,7 +288,7 @@ namespace ArchitecturalStudio
             for (var i = 0; i < count; i++)
             {
                 var clientOrderDate = _currentDate.AddDays(_rand.Next(dateRange));
-                var client = _listOfClients[_rand.Next(_listOfClients.Count)];
+                var client = _clientHandler.Clients[_rand.Next(_clientHandler.Clients.Count)];
                 var project = new Project(
                     i + shift,
                     clientOrderDate,
@@ -321,7 +319,7 @@ namespace ArchitecturalStudio
             var index = isFirstGeneration ? 0 : _firstPeriod.Projects;
             for (var i = isFirstGeneration ? 0 : _firstPeriod.Supervisions; i < count; i++)
             {
-                var manager = _listOfOuterSubjects[_rand.Next(_listOfOuterSubjects.Count)];
+                var manager = _outerSubjectHandler.OuterSubjects[_rand.Next(_outerSubjectHandler.OuterSubjects.Count)];
                 var project = _listOfProjects[index];
                 index += delta;
                 var supervision = new ProjectSupervision(i, manager.Id, 0, project.Id);
@@ -337,7 +335,7 @@ namespace ArchitecturalStudio
             for (var i = 0; i < count; i++)
             {
                 var project = _listOfProjects[_rand.Next(_listOfProjects.Count)];
-                var os = _listOfOuterSubjects[_rand.Next(_listOfOuterSubjects.Count)];
+                var os = _outerSubjectHandler.OuterSubjects[_rand.Next(_outerSubjectHandler.OuterSubjects.Count)];
                 _listOfOuterProjects.Add(new OuterProject(i, os.Id, project.Id));
             }
         }
@@ -350,21 +348,14 @@ namespace ArchitecturalStudio
         private void WriteToFiles(string time)
         {
             _architectHandler.Write(time);
+            _clientHandler.Write(time);
+            _outerSubjectHandler.Write(time);
             CreateCsvHeaders(Resources.Global_Data_Path, time);
 
             var tmp = new List<AbstractDataModel>();
 
             tmp = _listOfOuterProjects.Cast<AbstractDataModel>().ToList();
             WriteToCsv(tmp, Resources.Global_Data_Path + "outer_projects_" + time + ".csv");
-            tmp.Clear();
-
-            tmp = _listOfOuterSubjects.Cast<AbstractDataModel>().ToList();
-            WriteToCsv(tmp, Resources.Global_Data_Path + "outer_subjects_" + time + ".csv");
-            tmp.Clear();
-
-
-            tmp = _listOfClients.Cast<AbstractDataModel>().ToList();
-            WriteToBulk(tmp, Resources.Global_Data_Path + "clients_" + time + ".bulk");
             tmp.Clear();
 
             tmp = _listOfProjects.Cast<AbstractDataModel>().ToList();
@@ -386,16 +377,7 @@ namespace ArchitecturalStudio
 
         private static void CreateCsvHeaders(string path, string time)
         {
-            File.WriteAllText(GetFileName(path, "outer_subjects", time, "csv"), Resources.Generator_OuterSubjects_Csv_Header, Encoding.UTF8);
             File.WriteAllText(GetFileName(path, "outer_projects", time, "csv"), Resources.Generator_OuterProjects_Csv_Header, Encoding.UTF8);
-        }
-
-
-        private void WriteUpdatesToFiles(string time)
-        {
-            var text = new StringBuilder();
-            _listOfUpdates.ForEach(update => text.AppendLine(update));
-            File.AppendAllText(GetFileName(Resources.Global_Data_Path, "architects_update", time, "sql"), text.ToString(), Encoding.UTF8);
         }
     }
 }

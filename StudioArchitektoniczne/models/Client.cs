@@ -7,7 +7,7 @@ namespace ArchitecturalStudio.models
     {
         public Client(int id)
         {
-            this.Id = id;
+            Id = id;
             Name = RandomValueGenerator.GetEnumRandomValue<NameEnum>().ToString();
             Surname = RandomValueGenerator.GetEnumRandomValue<SurnameEnum>().ToString();
             CompanyName = new Random().NextDouble() < 0.6 ? RandomValueGenerator.GetRandomCompanyName(this) : "";
