@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using ArchitecturalStudio.handlers;
 using ArchitecturalStudio.models;
 using ArchitecturalStudio.models.enums;
-using ArchitecturalStudio.models.outer;
 using ArchitecturalStudio.Properties;
 
 namespace ArchitecturalStudio
@@ -17,27 +14,32 @@ namespace ArchitecturalStudio
         private Random _rand;
         private DateTime _currentDate = new DateTime(2010, 1, 1);
         private int _supervisions = 0;
-        private readonly List<Project> _listOfProjects = new List<Project>();
-        private readonly List<ProjectSupervision> _listOfSupervisors = new List<ProjectSupervision>();
-//        private readonly List<OuterProject> _listOfOuterProjects = new List<OuterProject>();
-        private readonly List<ProjectDone> _listOfProjectsDone = new List<ProjectDone>();
+        private readonly List<DoneProject> _listOfProjectsDone = new List<DoneProject>();
 
-        private List<Project> _projectsOm = new List<Project>();
-        private List<Project> _projectsOu = new List<Project>();
-        private List<Project> _projectsOb = new List<Project>();
-        
-        private readonly Dictionary<int, int> _mutatedArchitectsIdMapper = new Dictionary<int, int>();
-        private readonly List<string> _listOfUpdates = new List<string>();
+        //        private List<Project> _projectsOm = new List<Project>();
+        //        private List<Project> _projectsOu = new List<Project>();
+        //        private List<Project> _projectsOb = new List<Project>();
 
-        private readonly ArchitectHandler _architectHandler = new ArchitectHandler();
-        private readonly ClientHandler _clientHandler = new ClientHandler();
-        private readonly OuterSubjectHandler _outerSubjectHandler = new OuterSubjectHandler();
-        private readonly OuterProjectHandler _outerProjectHandler = new OuterProjectHandler();
+        // fixme: maybe some list or dictionary of it?
+        private ArchitectHandler _architectHandler;
+        private ClientHandler _clientHandler;
+        private OuterSubjectHandler _outerSubjectHandler;
+        private OuterProjectHandler _outerProjectHandler;
+        private ProjectHandler _projectHandler;
+        private SupervisionHandler _supervisionHandler;
+        private DoneProjectHandler _doneProjectHandler;
         public void InitGenerator(GeneratorParameters firstPeriod, GeneratorParameters secondPeriod)
         {
-            _rand = new Random(2137);
+            _rand = new Random(int.Parse(Resources.Global_Random_Seed));
             _firstPeriod = firstPeriod;
             _secondPeriod = secondPeriod;
+            _architectHandler = new ArchitectHandler();
+            _clientHandler = new ClientHandler();
+            _outerSubjectHandler = new OuterSubjectHandler();
+            _projectHandler = new ProjectHandler(_clientHandler);
+            _outerProjectHandler = new OuterProjectHandler(_projectHandler, _outerSubjectHandler);
+            _supervisionHandler = new SupervisionHandler(_projectHandler, _outerSubjectHandler);
+            _doneProjectHandler = new DoneProjectHandler();
         }
 
         public Generator(GeneratorSize size)
@@ -104,43 +106,26 @@ namespace ArchitecturalStudio
             InitGenerator(firstPeriod, secondPeriod);
         }
 
-        public void GenerateData()
+        public void Run()
         {
-
             var dateRange = (DateTime.Today - _currentDate).Days / 10;
-            GenerateSimpleData(_firstPeriod);
-            GenerateComplexData(dateRange, _firstPeriod.Projects, _firstPeriod.Supervisions, _firstPeriod.OuterProjects, true);
+            GenerateData(_firstPeriod);
             AssignArchitectsToProjects();
             WriteToFiles("t1");
 
             _architectHandler.Update(_currentDate);
 
-            GenerateSimpleData(_secondPeriod);
-            GenerateComplexData(dateRange, _secondPeriod.Projects, _secondPeriod.Supervisions, _secondPeriod.OuterProjects, false);
+            GenerateData(_secondPeriod);
             AssignArchitectsToProjects();
             WriteToFiles("t2");
         }
 
         private void AssignArchitectsToProjects()
         {
-            while (_listOfProjects.Find(p => p.Status != ProjectStatusEnum.UKONCZONY) != null)
+            while (_projectHandler.Projects.Find(p => p.Status != ProjectStatusEnum.UKONCZONY) != null)
             {
                 var type = RandomValueGenerator.GetEnumRandomValue<ArchitectureTypeEnum>();
-                switch (type)
-                {
-                    case ArchitectureTypeEnum.OBIEKT_BIUROWY:
-                        CreateConnection(_projectsOb, _architectHandler.AvailableArchitects[ArchitectureTypeEnum.OBIEKT_BIUROWY]);
-                        break;
-                    case ArchitectureTypeEnum.OBIEKT_MIESZKALNY:
-                        CreateConnection(_projectsOm, _architectHandler.AvailableArchitects[ArchitectureTypeEnum.OBIEKT_MIESZKALNY]);
-                        break;
-                    case ArchitectureTypeEnum.OBIEKT_USLUGOWY:
-                        CreateConnection(_projectsOu, _architectHandler.AvailableArchitects[ArchitectureTypeEnum.OBIEKT_USLUGOWY]);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-
+                CreateConnection(_projectHandler.ScheduledProjects[type], _architectHandler.AvailableArchitects[type]);
                 if (_rand.Next(30) >= 1) continue;
                 _currentDate = _currentDate.AddDays(1);
                 FreeArchitects();
@@ -166,7 +151,7 @@ namespace ArchitecturalStudio
                 pr.EndDate = pr.StartDate.AddDays(_rand.Next(0, 10));
             }
 
-            var pd = new ProjectDone();
+            var pd = new DoneProject();
             for (var i = 0; i < neededArchitects; i++)
             {
                 pd.ArchitectId = architects[0].Id;
@@ -176,7 +161,7 @@ namespace ArchitecturalStudio
             }
 
             projects.RemoveAll(p => p.Id == project.Id);
-            var supervision = _listOfSupervisors.Find(o => o.ProjectId == project.Id);
+            var supervision = _supervisionHandler.Supervisions.Find(o => o.ProjectId == project.Id);
             if (supervision != null)
             {
                 _supervisions++;
@@ -189,7 +174,7 @@ namespace ArchitecturalStudio
                 {
                     var architect = _architectHandler.Architects[projectDone.ArchitectId].Active
                         ? _architectHandler.Architects[projectDone.ArchitectId]
-                        : _architectHandler.Architects[_mutatedArchitectsIdMapper.GetValueOrDefault(projectDone.ArchitectId)];
+                        : _architectHandler.Architects[_architectHandler.IdMapper.GetValueOrDefault(projectDone.ArchitectId)];
                     availableSupervisors.Add(architect);
                 });
                 if (availableSupervisors.Any() && availableSupervisors.Find(o => o.CanSupervise) != null)
@@ -204,42 +189,31 @@ namespace ArchitecturalStudio
                 }
             }
         }
+
+        // fixme: do przeniesienia do ArchitectHandler
         private void FreeArchitects()
         {
             var architects = new List<Architect>();
-            var endingProjects = _listOfProjects.FindAll(p => p.StartDate >= p.ClientOrderDate &&
+            var endingProjects = _projectHandler.Projects.FindAll(p => p.StartDate >= p.ClientOrderDate &&
                 p.EndDate <= _currentDate &&
                 p.Status != ProjectStatusEnum.UKONCZONY
                 );
             if (endingProjects.Any())
             {
-                endingProjects.ForEach(p =>
+                endingProjects.ForEach(project =>
                 {
-                    p.Status = ProjectStatusEnum.UKONCZONY;
-                    switch (p.ArchitectureType)
-                    {
-                        case ArchitectureTypeEnum.OBIEKT_BIUROWY:
-                            _projectsOb.RemoveAll(project => project.Id == p.Id);
-                            break;
-                        case ArchitectureTypeEnum.OBIEKT_MIESZKALNY:
-                            _projectsOm.RemoveAll(project => project.Id == p.Id);
-                            break;
-                        case ArchitectureTypeEnum.OBIEKT_USLUGOWY:
-                            _projectsOu.RemoveAll(project => project.Id == p.Id);
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
+                    project.Status = ProjectStatusEnum.UKONCZONY;
+                    _projectHandler.ScheduledProjects[project.ArchitectureType].RemoveAll(p => p.Id == project.Id);
                 });
                 _listOfProjectsDone.FindAll(pd => endingProjects.Find(p => p.Id == pd.ProjectId) != null)
                     .ForEach(pd =>
                     {
                         var architect = _architectHandler.Architects[pd.ArchitectId].Active
                             ? _architectHandler.Architects[pd.ArchitectId]
-                            : _architectHandler.Architects[_mutatedArchitectsIdMapper.GetValueOrDefault(pd.ArchitectId)];
+                            : _architectHandler.Architects[_architectHandler.IdMapper.GetValueOrDefault(pd.ArchitectId)];
                         architects.Add(architect);
                     });
-                var supervision = _listOfSupervisors.Find(o => endingProjects.Find(p => p.Id == o.ProjectId) != null);
+                var supervision = _supervisionHandler.Supervisions.Find(o => endingProjects.Find(p => p.Id == o.ProjectId) != null);
                 if (supervision != null)
                 {
                     var supervisor = architects.Find(a => a.Id == supervision.ArchitectId);
@@ -250,7 +224,7 @@ namespace ArchitecturalStudio
                     }
                 }
             }
-            var endingSupervisions = _listOfSupervisors.FindAll(o => o.EndDate <= _currentDate && o.EndDate >= _currentDate.AddDays(-1));
+            var endingSupervisions = _supervisionHandler.Supervisions.FindAll(o => o.EndDate <= _currentDate && o.EndDate >= _currentDate.AddDays(-1));
             if (endingSupervisions.Any())
             {
                 var supervisors = new List<Architect>();
@@ -258,78 +232,23 @@ namespace ArchitecturalStudio
                 {
                     var architect = _architectHandler.Architects[o.ArchitectId].Active
                         ? _architectHandler.Architects[o.ArchitectId]
-                        : _architectHandler.Architects[_mutatedArchitectsIdMapper.GetValueOrDefault(o.ArchitectId)];
+                        : _architectHandler.Architects[_architectHandler.IdMapper.GetValueOrDefault(o.ArchitectId)];
                     supervisors.Add(architect);
                 });
                 architects = architects.Concat(supervisors).ToList();
             }
             architects.ForEach(a => _architectHandler.AvailableArchitects[a.Specialization].Add(a));
         }
-        private void GenerateSimpleData(GeneratorParameters period)
+        private void GenerateData(GeneratorParameters period)
         {
-            _clientHandler.Generate(period.Clients, _currentDate);
+            _clientHandler.Generate(period.Clients);
             _architectHandler.Generate(period.Architects, _currentDate);
-            _outerSubjectHandler.Generate(period.Clients, _currentDate);
+            _outerSubjectHandler.Generate(period.Clients);
+            _projectHandler.Generate(period.Projects);
+            _supervisionHandler.Generate(period.Supervisions);
+            _outerProjectHandler.Generate(period.OuterProjects);
+            _doneProjectHandler.Generate(0); // amount needed by interface, but here will be calculated on handler's side
         }
-        private void GenerateComplexData(int dateRange, int numberOfProjects, int numberOfSupervisions, int numberOfOuterProjects, bool isFirstGeneration)
-        {
-            GenerateProjects(isFirstGeneration, numberOfProjects, dateRange);
-            GenerateSupervisions(isFirstGeneration, numberOfSupervisions, numberOfProjects);
-            _outerProjectHandler.Generate(numberOfOuterProjects, _listOfProjects, _outerSubjectHandler.OuterSubjects);
-        }
-        private void GenerateProjects(bool isFirstGeneration, int count, int dateRange)
-        {
-            var shift = isFirstGeneration ? 0 : _firstPeriod.Projects;
-            for (var i = 0; i < count; i++)
-            {
-                var clientOrderDate = _currentDate.AddDays(_rand.Next(dateRange));
-                var client = _clientHandler.Clients[_rand.Next(_clientHandler.Clients.Count)];
-                var project = new Project(
-                    i + shift,
-                    clientOrderDate,
-                    client.Id);
-                _listOfProjects.Add(project);
-                switch (project.ArchitectureType)
-                {
-                    case ArchitectureTypeEnum.OBIEKT_BIUROWY:
-                        _projectsOb.Add(project);
-                        break;
-                    case ArchitectureTypeEnum.OBIEKT_MIESZKALNY:
-                        _projectsOm.Add(project);
-                        break;
-                    case ArchitectureTypeEnum.OBIEKT_USLUGOWY:
-                        _projectsOu.Add(project);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-            _projectsOb = OrderListByStatusAndClientOrderDate(_projectsOb);
-            _projectsOm = OrderListByStatusAndClientOrderDate(_projectsOm);
-            _projectsOu = OrderListByStatusAndClientOrderDate(_projectsOu);
-        }
-        private void GenerateSupervisions(bool isFirstGeneration, int count, int numberOfProjects)
-        {
-            var delta = count != 0 ? numberOfProjects / count : numberOfProjects;
-            var index = isFirstGeneration ? 0 : _firstPeriod.Projects;
-            for (var i = isFirstGeneration ? 0 : _firstPeriod.Supervisions; i < count; i++)
-            {
-                var manager = _outerSubjectHandler.OuterSubjects[_rand.Next(_outerSubjectHandler.OuterSubjects.Count)];
-                var project = _listOfProjects[index];
-                index += delta;
-                var supervision = new ProjectSupervision(i, manager.Id, 0, project.Id);
-                project.TotalPrize = project.Prize + supervision.Prize;
-                project.IsSupervised = true;
-                supervision.Update();
-                _listOfSupervisors.Add(supervision);
-            }
-        }
-        
-        private static List<Project> OrderListByStatusAndClientOrderDate(IEnumerable<Project> list)
-        {
-            return list.OrderBy(project => project.Status).ThenBy(project => project.ClientOrderDate).ToList();
-        }
-
 
         private void WriteToFiles(string time)
         {
@@ -337,20 +256,11 @@ namespace ArchitecturalStudio
             _clientHandler.Write(time);
             _outerSubjectHandler.Write(time);
             _outerProjectHandler.Write(time);
-
-            var tmp = _listOfProjects.Cast<AbstractDataModel>().ToList();
-            WriteToBulk(tmp, Resources.Global_Data_Path + "projects_" + time + ".bulk");
-            tmp.Clear();
-
-            tmp = _listOfProjectsDone.Cast<AbstractDataModel>().ToList();
-            WriteToBulk(tmp, Resources.Global_Data_Path + "projects_done_" + time + ".bulk");
-            tmp.Clear();
-
-            tmp = _listOfSupervisors.Cast<AbstractDataModel>().ToList();
-            WriteToBulk(tmp, Resources.Global_Data_Path + "project_supervisions_" + time + ".bulk");
-            tmp.Clear();
+            _projectHandler.Write(time);
+            _supervisionHandler.Write(time);
+            _doneProjectHandler.Write(time);
         }
-        
+
         private void WriteToBulk(params object[] parameters) { }
     }
 }

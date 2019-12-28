@@ -36,7 +36,7 @@ namespace ArchitecturalStudio.models
         public int EndDelay { get; set; }
         public decimal TotalPrize { get; set; }
         public bool IsSupervised { get; set; }
-        public LengthEnum Length { get; set; }
+        public LengthEnum ProjectLength { get; set; }
         public SupervisionAccumulation SupervisionAccumulation { get; set; }
         public int CurrentSupervisions { get; set; }
 
@@ -52,11 +52,11 @@ namespace ArchitecturalStudio.models
 
         private void UpdateLength()
         {
-            if (Size <= 60) Length = LengthEnum.BARDZO_KROTKI;
-            else if (Size <= 120) Length = LengthEnum.KROTKI;
-            else if (Size <= 180) Length = LengthEnum.SREDNI;
-            else if (Size <= 240) Length = LengthEnum.DLUGI;
-            else Length = LengthEnum.BARDZO_DLUGI;
+            if (Size <= 60) ProjectLength = LengthEnum.BARDZO_KROTKI;
+            else if (Size <= 120) ProjectLength = LengthEnum.KROTKI;
+            else if (Size <= 180) ProjectLength = LengthEnum.SREDNI;
+            else if (Size <= 240) ProjectLength = LengthEnum.DLUGI;
+            else ProjectLength = LengthEnum.BARDZO_DLUGI;
         }
 
         private void UpdateSupervisionAccumulation()

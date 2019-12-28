@@ -15,10 +15,11 @@ namespace ArchitecturalStudio.handlers
     {
         public List<Architect> Architects { get; set; }
         public Dictionary<ArchitectureTypeEnum, List<Architect>> AvailableArchitects { get; set; }
-        private readonly Dictionary<int, int> _idMapper = new Dictionary<int, int>();
+        public readonly Dictionary<int, int> IdMapper = new Dictionary<int, int>();
         private int _lastArchitectId;
         private readonly Random _rand;
         private List<string> _updates = new List<string>();
+        private DateTime _expirationDate = new DateTime(2999, 12, 31);
 
         public ArchitectHandler()
         {
@@ -34,20 +35,19 @@ namespace ArchitecturalStudio.handlers
         }
         public void Generate(int amount, params object[] parameters)
         {
-            if (!DateTime.TryParse(parameters[0].ToString(), out var currentDate))
+            if (!DateTime.TryParse(parameters[0].ToString(), out var insertData))
             {
                 throw new ArgumentException();
             }
-            GenerateArchitects(amount, currentDate);
+            GenerateArchitects(amount, insertData);
             ShuffleArchitects();
             CreateHierarchy();
         }
-        private void GenerateArchitects(int amount, DateTime currentDate)
+        private void GenerateArchitects(int amount, DateTime insertData)
         {
-            var baseIndex = Architects.Any() ? Architects.Count : 0;
             for (var i = 0; i < amount; i++)
             {
-                Architects.Add(new Architect(baseIndex + i, currentDate, new DateTime(2999, 12, 31)));
+                Architects.Add(new Architect(Architects.Count + 1, insertData, _expirationDate));
             }
         }
         private void ShuffleArchitects()
@@ -64,7 +64,7 @@ namespace ArchitecturalStudio.handlers
         }
         private static List<T> ShuffleList<T>(List<T> list)
         {
-            var rand = new Random(2137);
+            var rand = new Random(int.Parse(Resources.Global_Random_Seed));
             var n = list.Count;
             while (n > 1)
             {
@@ -115,7 +115,7 @@ namespace ArchitecturalStudio.handlers
                 updatedArchitect.InsertDate = currentDate;
                 updatedArchitect.Id = Architects.Count();
                 Architects.Add(updatedArchitect);
-                _idMapper.Add(architect.Id, updatedArchitect.Id);
+                IdMapper.Add(architect.Id, updatedArchitect.Id);
                 DeactivateArchitect(currentDate, architect);
             });
         }
@@ -147,7 +147,7 @@ namespace ArchitecturalStudio.handlers
             updatedArchitects.Add(updatedArchitect);
             architect.Active = false;
             architect.ExpirationDate = currentDate;
-            _idMapper.Add(architect.Id, updatedArchitect.Id);
+            IdMapper.Add(architect.Id, updatedArchitect.Id);
         }
 
         private static void DeactivateArchitect(DateTime currentDate, Architect architect)

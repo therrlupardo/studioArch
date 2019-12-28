@@ -27,14 +27,14 @@ namespace ArchitecturalStudio.models
         public int Size { get; set; }
         public LengthEnum Length { get; set; }
 
-        public void Update()
+        public void RecalculateFields()
         {
             EndDelay = (EndDate - StartDate).Days;
             Size = EndDelay * 8;
-            UpdateLength();
+            RecalculateLength();
         }
 
-        private void UpdateLength()
+        private void RecalculateLength()
         {
             if (Size <= 60) Length = LengthEnum.BARDZO_KROTKI;
             else if (Size <= 120) Length = LengthEnum.KROTKI;

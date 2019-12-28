@@ -13,22 +13,23 @@ namespace ArchitecturalStudio.handlers
     public class OuterProjectHandler: AbstractHandler, IGenerator, IWritable
     {
         public List<OuterProject> OuterProjects { get; set; }
+        private readonly OuterSubjectHandler _outerSubjectHandler;
+        private readonly ProjectHandler _projectHandler;
         private Random _rand;
-        public OuterProjectHandler()
+        public OuterProjectHandler(ProjectHandler projectHandler, OuterSubjectHandler outerSubjectHandler)
         {
             OuterProjects = new List<OuterProject>();
             _rand = new Random(int.Parse(Resources.Global_Random_Seed));
+            _projectHandler = projectHandler;
+            _outerSubjectHandler = outerSubjectHandler;
         }
         public void Generate(int amount, params object[] parameters)
         {
-            var index = OuterProjects.Any() ? OuterProjects.Count : 0;
-            var projects = (List<Project>) parameters[0];
-            var outerSubjects = (List<OuterSubject>) parameters[1];
             for (var i = 0; i < amount; i++)
             {
-                var projectId = projects[_rand.Next(projects.Count)].Id;
-                var outerSubjectId = outerSubjects[_rand.Next(outerSubjects.Count)].Id;
-                OuterProjects.Add(new OuterProject(index + i, outerSubjectId, projectId));
+                var projectId = _projectHandler.GetRandomProject().Id;
+                var outerSubjectId = _outerSubjectHandler.GetRandomOuterSubject().Id;
+                OuterProjects.Add(new OuterProject(OuterProjects.Count + 1, outerSubjectId, projectId));
             }
         }
         

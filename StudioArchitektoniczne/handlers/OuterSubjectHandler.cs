@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -12,10 +13,15 @@ namespace ArchitecturalStudio.handlers
     public class OuterSubjectHandler: AbstractHandler, IGenerator, IWritable
     {
         public List<OuterSubject> OuterSubjects { get; set; }
+        private readonly Random _random;
+
+        public OuterSubjectHandler()
+        {
+            _random = new Random(int.Parse(Resources.Global_Random_Seed));
+        }
         public void Generate(int amount, params object[] parameters)
         {
-            var index = OuterSubjects.Any() ? OuterSubjects.Count : 0;
-            for (var i = 0; i < amount; i++) OuterSubjects.Add(new OuterSubject(index + i));
+            for (var i = 0; i < amount; i++) OuterSubjects.Add(new OuterSubject(OuterSubjects.Count + 1));
         }
 
         public void Write(string time)
@@ -26,6 +32,11 @@ namespace ArchitecturalStudio.handlers
                 Encoding.UTF8);
             var dataModels = OuterSubjects.Cast<AbstractDataModel>().ToList();
             WriteToCsv(dataModels, $"{Resources.Global_Data_Path}outer_subjects_{time}.csv");
+        }
+
+        public OuterSubject GetRandomOuterSubject()
+        {
+            return OuterSubjects[_random.Next(OuterSubjects.Count)];
         }
     }
 }

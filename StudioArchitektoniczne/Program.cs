@@ -11,7 +11,7 @@ namespace ArchitecturalStudio
         public static void Main()
         { 
             var generator = new Generator(GeneratorSize.SMALL);
-            generator.GenerateData();
+            generator.Run();
         }
     
         private static Generator CustomGenerator()
