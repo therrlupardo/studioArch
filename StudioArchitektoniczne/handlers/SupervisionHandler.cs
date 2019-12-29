@@ -51,5 +51,15 @@ namespace ArchitecturalStudio.handlers
             var dataModels = Supervisions.Cast<AbstractDataModel>().ToList();
             WriteToBulk(dataModels, $"{Resources.Global_Data_Path}project_supervisions_{time}.bulk");
         }
+
+        public ProjectSupervision GetOneById(int id)
+        {
+            return Supervisions.Find(a => a.Id == id);
+        }
+
+        public List<ProjectSupervision> GetEndingSupervisions(DateTime currentDate)
+        {
+            return Supervisions.FindAll(o => o.EndDate <= currentDate && o.EndDate >= currentDate.AddDays(-1));
+        }
     }
 }

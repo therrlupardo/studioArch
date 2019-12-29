@@ -39,6 +39,7 @@ namespace ArchitecturalStudio.handlers
             }
             foreach (var (key, value) in ScheduledProjects)
             {
+                // fixme: can't edit value like this
                 ScheduledProjects[key] = OrderListByStatusAndClientOrderDate(value);
             }
         }
@@ -68,6 +69,20 @@ namespace ArchitecturalStudio.handlers
         private static List<Project> OrderListByStatusAndClientOrderDate(IEnumerable<Project> list)
         {
             return list.OrderBy(project => project.Status).ThenBy(project => project.ClientOrderDate).ToList();
+        }
+
+        public List<Project> GetProjectsByEndDate(DateTime date)
+        {
+            return Projects.FindAll(p => p.StartDate >= p.ClientOrderDate &&
+                                                  p.EndDate <= date &&
+                                                  p.Status != ProjectStatusEnum.UKONCZONY
+            );
+        }
+
+        public void EndProject(Project project)
+        {
+            project.Status = ProjectStatusEnum.UKONCZONY;
+            ScheduledProjects[project.ArchitectureType].RemoveAll(p => p.Id == project.Id);
         }
 
     }

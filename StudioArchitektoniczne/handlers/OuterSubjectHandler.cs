@@ -18,6 +18,7 @@ namespace ArchitecturalStudio.handlers
         public OuterSubjectHandler()
         {
             _random = new Random(int.Parse(Resources.Global_Random_Seed));
+            OuterSubjects = new List<OuterSubject>();
         }
         public void Generate(int amount, params object[] parameters)
         {

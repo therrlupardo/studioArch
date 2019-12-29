@@ -18,8 +18,8 @@ namespace ArchitecturalStudio.handlers
         public readonly Dictionary<int, int> IdMapper = new Dictionary<int, int>();
         private int _lastArchitectId;
         private readonly Random _rand;
-        private List<string> _updates = new List<string>();
-        private DateTime _expirationDate = new DateTime(2999, 12, 31);
+        private readonly List<string> _updates = new List<string>();
+        private readonly DateTime _expirationDate = new DateTime(2999, 12, 31);
 
         public ArchitectHandler()
         {
@@ -97,13 +97,11 @@ namespace ArchitecturalStudio.handlers
             WriteToCsv(dataModels, $"{Resources.Global_Data_Path}architects_{time}.csv");
             WriteToBulk(dataModels, $"{Resources.Global_Data_Path}architects_{time}.bulk");
         }
-
         public void Update(DateTime currentDate)
         {
             UpdateSpecialization(currentDate);
             UpdateCanSupervise(currentDate);
         }
-
         private void UpdateCanSupervise(DateTime currentDate)
         {
             var amount = _rand.Next(1, 4);
@@ -119,7 +117,6 @@ namespace ArchitecturalStudio.handlers
                 DeactivateArchitect(currentDate, architect);
             });
         }
-
         private void UpdateSpecialization(DateTime currentDate)
         {
             var amount = _rand.Next(1, 4);
@@ -129,8 +126,7 @@ namespace ArchitecturalStudio.handlers
             CreateUpdateFile(updatedArchitects);
             AddArchitectsToSpecializedGroups(updatedArchitects);
         }
-
-        private void UpdateSpecializationOfArchitect(DateTime currentDate, Architect architect, List<Architect> updatedArchitects)
+        private void UpdateSpecializationOfArchitect(DateTime currentDate, Architect architect, ICollection<Architect> updatedArchitects)
         {
             var updatedArchitect = architect.Copy();
             updatedArchitect.InsertDate = currentDate;
@@ -149,13 +145,11 @@ namespace ArchitecturalStudio.handlers
             architect.ExpirationDate = currentDate;
             IdMapper.Add(architect.Id, updatedArchitect.Id);
         }
-
         private static void DeactivateArchitect(DateTime currentDate, Architect architect)
         {
             architect.Active = false;
             architect.ExpirationDate = currentDate;
         }
-
         private List<Architect> GetArchitectsToUpdate(int amount)
         {
             var architectsToUpdate = new List<Architect>();
@@ -168,7 +162,6 @@ namespace ArchitecturalStudio.handlers
             }
             return architectsToUpdate;
         }
-
         private void CreateUpdateFile(List<Architect> architects)
         {
             architects.ForEach(architect =>
@@ -178,7 +171,6 @@ namespace ArchitecturalStudio.handlers
             });
             WriteUpdates();
         }
-
         private void AddArchitectsToSpecializedGroups(List<Architect> architects)
         {
             architects.ForEach(architect => AvailableArchitects[architect.Specialization].Add(architect));
@@ -190,5 +182,16 @@ namespace ArchitecturalStudio.handlers
             File.AppendAllText($"{Resources.Global_Data_Path}architects_update.sql", text.ToString(), Encoding.UTF8);
         }
 
+        private int GetMappedId(int id)
+        {
+            return IdMapper.GetValueOrDefault(id);
+        }
+
+        public Architect GetOneById(int id)
+        {
+            return Architects[id].Active
+                ? Architects[id]
+                : Architects[GetMappedId(id)];
+        }
     }
 }

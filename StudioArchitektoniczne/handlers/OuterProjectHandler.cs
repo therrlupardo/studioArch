@@ -42,5 +42,10 @@ namespace ArchitecturalStudio.handlers
             var dataModels = OuterProjects.Cast<AbstractDataModel>().ToList();
             WriteToCsv(dataModels, $"{Resources.Global_Data_Path}outer_projects_{time}.csv");
         }
+
+        public List<OuterProject> GetAllById(int id)
+        {
+            return OuterProjects.FindAll(a => a.Id == id).ToList();
+        }
     }
 }
