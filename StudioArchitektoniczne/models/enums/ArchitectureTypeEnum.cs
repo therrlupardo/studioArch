@@ -1,6 +1,6 @@
-﻿namespace StudioArchitektoniczne.models.enums
+﻿namespace ArchitecturalStudio.models.enums
 {
-    enum ArchitectureTypeEnum
+    public enum ArchitectureTypeEnum
     {
         OBIEKT_MIESZKALNY,
         OBIEKT_USLUGOWY,

@@ -1,6 +1,6 @@
-﻿namespace StudioArchitektoniczne.models.enums
+﻿namespace ArchitecturalStudio.models.enums
 {
-    enum CityEnum
+    public enum CityEnum
     {
         GDANSK,
         WARSZAWA,

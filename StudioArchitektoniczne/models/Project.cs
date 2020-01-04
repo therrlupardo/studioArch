@@ -1,68 +1,80 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
-using StudioArchitektoniczne.models.enums;
+using ArchitecturalStudio.models.enums;
 
-namespace StudioArchitektoniczne.models
+namespace ArchitecturalStudio.models
 {
-    class Project : DataModel
+    public class Project : AbstractDataModel
     {
+
+        private const string Supervised = "NADZOROWANO";
+        private const string NotSupervised = "NIENADZOROWANO";
+
         public Project(int id, DateTime clientOrderDate, int clientId)
         {
-            this.id = id;
-            architectureType = RandomValueGenerator.GetEnumRandomValue<ArchitectureTypeEnum>();
-            startDate = new DateTime();
-            endDate = startDate.AddDays(new Random().Next(300));
-            prize = Calculator.CalculateProjectCost(startDate, endDate, architectureType);
-            totalPrize = prize;
-            size = (endDate-startDate).Days;
-            this.clientOrderDate = clientOrderDate;
-            this.clientId = clientId;
-            this.status = ProjectStatusEnum.PRZYJETO_DO_REALIZACJI;
+            Id = id;
+            ClientOrderDate = clientOrderDate;
+            ClientId = clientId;
+            ArchitectureType = RandomValueGenerator.GetEnumRandomValue<ArchitectureTypeEnum>();
+            StartDate = new DateTime();
+            EndDate = StartDate.AddDays(new Random().Next(300));
+            Prize = Calculator.CalculateProjectCost(StartDate, EndDate, ArchitectureType);
+            TotalPrize = Prize;
+            Size = (EndDate-StartDate).Days;
+            Status = StatusEnum.PRZYJETO_DO_REALIZACJI;
         }
 
-        public int id { get; }
-        public ArchitectureTypeEnum architectureType { get; set; }
-        public Decimal prize { get; set; }
-        public DateTime clientOrderDate { get; set; }
-        public DateTime startDate { get; set; }
-        public DateTime endDate { get; set; }
-        public ProjectStatusEnum status { get; set; }
-        public int size { get; set; }
-        public int clientId { get; set; }
-        public int startDelay { get; set; }
-        public int endDelay { get; set; }
-        public Decimal totalPrize { get; set; }
-        public bool isOverwatched { get; set; }
-        public LengthEnum length { get; set; }
-        public OverwatchAccumulation overwatchAccumulation { get; set; }
-        public int currentOverwatches { get; set; }
+        public int Id { get; set; }
+        public ArchitectureTypeEnum ArchitectureType { get; set; }
+        public decimal Prize { get; set; }
+        public DateTime ClientOrderDate { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public StatusEnum Status { get; set; }
+        public int Size { get; set; }
+        public int ClientId { get; set; }
+        public int StartDelay { get; set; }
+        public int EndDelay { get; set; }
+        public decimal TotalPrize { get; set; }
+        public bool IsSupervised { get; set; }
+        public LengthEnum ProjectLength { get; set; }
+        public SupervisionAccumulation SupervisionAccumulation { get; set; }
+        public int CurrentSupervisions { get; set; }
 
-        public void updateSize(int overwatches)
+        public void Update(int supervisions)
         {
-            size = (endDate - startDate).Days * 8;
-            startDelay = (startDate - clientOrderDate).Days;
-            endDelay = (endDate - clientOrderDate).Days;
-            if (size <= 60) length = LengthEnum.BARDZO_KROTKI;
-            else if (size <= 120) length = LengthEnum.KROTKI;
-            else if (size <= 180) length = LengthEnum.SREDNI;
-            else if (size <= 240) length = LengthEnum.DLUGI;
-            else length = LengthEnum.BARDZO_DLUGI;
-
-            if (overwatches < 10) overwatchAccumulation = OverwatchAccumulation.MALE;
-            else if (overwatches < 20) overwatchAccumulation = OverwatchAccumulation.SREDNIE;
-            else overwatchAccumulation = OverwatchAccumulation.DUZE;
-
-            currentOverwatches = overwatches;
-
+            Size = (EndDate - StartDate).Days * 8;
+            StartDelay = (StartDate - ClientOrderDate).Days;
+            EndDelay = (EndDate - ClientOrderDate).Days;
+            CurrentSupervisions = supervisions;
+            UpdateLength();
+            UpdateSupervisionAccumulation();
         }
-        private String GetIsOverwatchedString()
+
+        private void UpdateLength()
         {
-            return isOverwatched ? "NADZOROWANO" : "NIENADZOROWANO";
+            if (Size <= 60) ProjectLength = LengthEnum.BARDZO_KROTKI;
+            else if (Size <= 120) ProjectLength = LengthEnum.KROTKI;
+            else if (Size <= 180) ProjectLength = LengthEnum.SREDNI;
+            else if (Size <= 240) ProjectLength = LengthEnum.DLUGI;
+            else ProjectLength = LengthEnum.BARDZO_DLUGI;
         }
 
-        public override string ToBulkString()
+        private void UpdateSupervisionAccumulation()
         {
-            return $"{id}|{size}|{prize}|{totalPrize}|{architectureType}|{GetIsOverwatchedString()}|{currentOverwatches}|{DataModel.ConvertDateToDDMMYYYY(clientOrderDate)}|{DataModel.ConvertDateToDDMMYYYY(startDate)}|{DataModel.ConvertDateToDDMMYYYY(endDate)}|{clientId}";
+            if (CurrentSupervisions < 10) SupervisionAccumulation = SupervisionAccumulation.MALE;
+            else if (CurrentSupervisions < 20) SupervisionAccumulation = SupervisionAccumulation.SREDNIE;
+            else SupervisionAccumulation = SupervisionAccumulation.DUZE;
         }
+
+        private string IsSupervisedToString()
+        {
+            return IsSupervised ? Supervised : NotSupervised;
+        }
+
+        public override string ToBulk()
+        {
+            return $"{Id}|{Size}|{Prize}|{TotalPrize}|{ArchitectureType}|{IsSupervisedToString()}|{CurrentSupervisions}|{ConvertDate(ClientOrderDate)}|{ConvertDate(StartDate)}|{ConvertDate(EndDate)}|{ClientId}";
+        }
+
     }
 }

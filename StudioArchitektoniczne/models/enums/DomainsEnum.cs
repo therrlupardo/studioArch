@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel;
 
-namespace StudioArchitektoniczne.models.enums
+namespace ArchitecturalStudio.models.enums
 {
-    enum DomainsEnum
+    public enum DomainsEnum
     {
         [Description("gmail.com")]
         GMAIL,

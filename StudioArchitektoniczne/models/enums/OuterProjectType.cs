@@ -1,6 +1,6 @@
-﻿namespace StudioArchitektoniczne.models.enums
+﻿namespace ArchitecturalStudio.models.enums
 {
-    enum OuterProjectType
+    public enum OuterProjectType
     {
         WODOCIĄGOWY,
         ELEKTRYCZNY,
