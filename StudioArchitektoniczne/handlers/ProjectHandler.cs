@@ -37,11 +37,13 @@ namespace ArchitecturalStudio.handlers
                 Projects.Add(project);
                 ScheduledProjects[project.ArchitectureType].Add(project);
             }
-            foreach (var (key, value) in ScheduledProjects)
-            {
-                // fixme: can't edit value like this
-                ScheduledProjects[key] = OrderListByStatusAndClientOrderDate(value);
-            }
+
+            ScheduledProjects[OBIEKT_MIESZKALNY] =
+                OrderListByStatusAndClientOrderDate(ScheduledProjects[OBIEKT_MIESZKALNY]);
+            ScheduledProjects[OBIEKT_BIUROWY] =
+                OrderListByStatusAndClientOrderDate(ScheduledProjects[OBIEKT_BIUROWY]);
+            ScheduledProjects[OBIEKT_USLUGOWY] =
+                OrderListByStatusAndClientOrderDate(ScheduledProjects[OBIEKT_USLUGOWY]);
         }
 
         private Project CreateProject(DateTime currentDate)
@@ -53,7 +55,7 @@ namespace ArchitecturalStudio.handlers
 
         private DateTime CreateClientOrderDate(DateTime currentDate)
         {
-            return currentDate.AddDays(_random.Next((DateTime.Today - currentDate).Days / 10));
+            return currentDate.AddDays(_random.Next(3650));
         }
 
         public void Write(string time)
@@ -73,17 +75,20 @@ namespace ArchitecturalStudio.handlers
 
         public List<Project> GetProjectsByEndDate(DateTime date)
         {
-            return Projects.FindAll(p => p.StartDate >= p.ClientOrderDate &&
-                                                  p.EndDate <= date &&
-                                                  p.Status != ProjectStatusEnum.UKONCZONY
-            );
+            return Projects.FindAll(IsEnding(date));
+        }
+
+        private static Predicate<Project> IsEnding(DateTime date)
+        {
+            return project => project.StartDate >= project.ClientOrderDate &&
+                        project.EndDate <= date &&
+                        project.Status != StatusEnum.UKONCZONY;
         }
 
         public void EndProject(Project project)
         {
-            project.Status = ProjectStatusEnum.UKONCZONY;
+            project.Status = StatusEnum.UKONCZONY;
             ScheduledProjects[project.ArchitectureType].RemoveAll(p => p.Id == project.Id);
         }
-
     }
 }

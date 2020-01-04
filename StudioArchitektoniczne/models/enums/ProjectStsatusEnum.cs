@@ -1,6 +1,6 @@
 ﻿namespace ArchitecturalStudio.models.enums
 {
-    public enum ProjectStatusEnum
+    public enum StatusEnum
     {
         PRZYJETO_DO_REALIZACJI,
         W_TRAKCIE_PRAC,

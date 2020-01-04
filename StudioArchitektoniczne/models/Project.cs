@@ -20,7 +20,7 @@ namespace ArchitecturalStudio.models
             Prize = Calculator.CalculateProjectCost(StartDate, EndDate, ArchitectureType);
             TotalPrize = Prize;
             Size = (EndDate-StartDate).Days;
-            Status = ProjectStatusEnum.PRZYJETO_DO_REALIZACJI;
+            Status = StatusEnum.PRZYJETO_DO_REALIZACJI;
         }
 
         public int Id { get; set; }
@@ -29,7 +29,7 @@ namespace ArchitecturalStudio.models
         public DateTime ClientOrderDate { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public ProjectStatusEnum Status { get; set; }
+        public StatusEnum Status { get; set; }
         public int Size { get; set; }
         public int ClientId { get; set; }
         public int StartDelay { get; set; }

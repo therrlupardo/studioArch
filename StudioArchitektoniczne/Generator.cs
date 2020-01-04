@@ -12,9 +12,7 @@ namespace ArchitecturalStudio
     public class Generator
     {
         private GeneratorParameters _firstPeriod, _secondPeriod;
-        private Random _rand;
 
-        // fixme: maybe some list or dictionary of it?
         private ArchitectHandler _architectHandler;
         private ClientHandler _clientHandler;
         private OuterSubjectHandler _outerSubjectHandler;
@@ -24,7 +22,6 @@ namespace ArchitecturalStudio
         private DoneProjectHandler _doneProjectHandler;
         public void InitGenerator(GeneratorParameters firstPeriod, GeneratorParameters secondPeriod)
         {
-            _rand = new Random(int.Parse(Resources.Global_Random_Seed));
             _firstPeriod = firstPeriod;
             _secondPeriod = secondPeriod;
             _architectHandler = new ArchitectHandler();
@@ -138,7 +135,5 @@ namespace ArchitecturalStudio
             _supervisionHandler.Write(time);
             _doneProjectHandler.Write(time);
         }
-
-        private void WriteToBulk(params object[] parameters) { }
     }
 }

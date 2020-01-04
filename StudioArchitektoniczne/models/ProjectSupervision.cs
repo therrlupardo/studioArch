@@ -1,5 +1,6 @@
 ﻿using System;
 using ArchitecturalStudio.models.enums;
+using static ArchitecturalStudio.models.enums.StatusEnum;
 
 namespace ArchitecturalStudio.models
 {
@@ -14,6 +15,7 @@ namespace ArchitecturalStudio.models
             StartDate = new DateTime();
             EndDate = StartDate.AddDays(new Random().Next(300));
             Prize = Calculator.CalculateSupervisionCost(StartDate, EndDate);
+            Status = PRZYJETO_DO_REALIZACJI;
         }
 
         public int Id { get; }
@@ -26,6 +28,7 @@ namespace ArchitecturalStudio.models
         public int EndDelay { get; set; }
         public int Size { get; set; }
         public LengthEnum Length { get; set; }
+        public StatusEnum Status { get; set; }
 
         public void RecalculateFields()
         {

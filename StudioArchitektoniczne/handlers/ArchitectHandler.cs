@@ -189,6 +189,7 @@ namespace ArchitecturalStudio.handlers
 
         public Architect GetOneById(int id)
         {
+            id -= 1;
             return Architects[id].Active
                 ? Architects[id]
                 : Architects[GetMappedId(id)];

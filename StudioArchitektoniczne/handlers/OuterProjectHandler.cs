@@ -36,7 +36,7 @@ namespace ArchitecturalStudio.handlers
         public void Write(string time)
         {
             File.AppendAllLines(
-                $"{Resources.Global_Data_Path}outer_projects{time}.csv",
+                $"{Resources.Global_Data_Path}outer_projects_{time}.csv",
                 new List<string>(){Resources.Generator_OuterProjects_Csv_Header},
                 Encoding.UTF8);
             var dataModels = OuterProjects.Cast<AbstractDataModel>().ToList();

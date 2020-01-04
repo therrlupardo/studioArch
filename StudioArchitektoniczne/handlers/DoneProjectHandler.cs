@@ -16,7 +16,6 @@ namespace ArchitecturalStudio.handlers
         private readonly ArchitectHandler _architectHandler;
         private readonly SupervisionHandler _supervisionHandler;
         private readonly OuterProjectHandler _outerProjectHandler;
-        private static int _numberOfCurrentSupervisions;
         private readonly Random _random;
         public DateTime CurrentDate { get; set; }
         public DoneProjectHandler(ProjectHandler projectHandler, ArchitectHandler architectHandler,
@@ -27,7 +26,6 @@ namespace ArchitecturalStudio.handlers
             _architectHandler = architectHandler;
             _supervisionHandler = supervisionHandler;
             _outerProjectHandler = outerProjectHandler;
-            _numberOfCurrentSupervisions = 0;
             _random = new Random(int.Parse(Resources.Global_Random_Seed));
             CurrentDate = new DateTime(2010, 1, 1);
     }
@@ -36,19 +34,20 @@ namespace ArchitecturalStudio.handlers
             while (IsAnyProjectRunning())
             {
                 var type = RandomValueGenerator.GetEnumRandomValue<ArchitectureTypeEnum>();
-                CreateConnection(type);
-                if (IsNextDay()) continue;
+                var connectionCreated = CreateConnection(type);
+                if (connectionCreated && IsSameDay()) continue;
                 CurrentDate = CurrentDate.AddDays(1);
                 FreeArchitects();
             }
+            Console.WriteLine(CurrentDate);
         }
 
         private bool IsAnyProjectRunning()
         {
-            return _projectHandler.Projects.Find(p => p.Status != ProjectStatusEnum.UKONCZONY) != null;
+            return _projectHandler.Projects.Find(p => p.Status != StatusEnum.UKONCZONY) != null;
         }
 
-        private bool IsNextDay()
+        private bool IsSameDay()
         {
             return _random.Next(30) >= 1;
         }
@@ -70,10 +69,9 @@ namespace ArchitecturalStudio.handlers
         {
             var endingSupervisions = _supervisionHandler.GetEndingSupervisions(CurrentDate);
             if (!endingSupervisions.Any()) return architects;
-
-            var supervisors = new List<Architect>();
-            endingSupervisions.ForEach(o => supervisors.Add(_architectHandler.GetOneById(o.ArchitectId)));
-            return architects.Concat(supervisors).ToList();
+            endingSupervisions.ForEach(_supervisionHandler.EndSupervision);
+            endingSupervisions.ForEach(o => architects.Add(_architectHandler.GetOneById(o.ArchitectId)));
+            return architects;
         }
 
         private List<Architect> FreeFromProjects()
@@ -87,7 +85,6 @@ namespace ArchitecturalStudio.handlers
                 .ForEach(project => architectsToFree.Add(_architectHandler.GetOneById(project.ArchitectId)));
 
             RemoveSupervisor(endingProjects, architectsToFree);
-            _numberOfCurrentSupervisions--;
 
             return architectsToFree;
         }
@@ -99,6 +96,7 @@ namespace ArchitecturalStudio.handlers
             var supervisor = architects.Find(a => a.Id == supervision.ArchitectId);
             if (supervisor == null) return;
             architects.Remove(supervisor);
+            supervision.Status = StatusEnum.W_TRAKCIE_PRAC;
         }
 
         private static bool IsProjectEnding(List<Project> endingProjects, int id)
@@ -106,25 +104,25 @@ namespace ArchitecturalStudio.handlers
             return endingProjects.Find(p => p.Id == id) != null;
         }
 
-        private void CreateConnection(ArchitectureTypeEnum type)
+        private bool CreateConnection(ArchitectureTypeEnum type)
         {
             var projects = _projectHandler.ScheduledProjects[type];
             var architects = _architectHandler.AvailableArchitects[type];
-            if (IsAnyArchitectAndProjectAvailable(projects, architects)) return;
+            if (IsAnyArchitectAndProjectAvailable(projects, architects)) return false;
             var project = projects[0];
+            if (IsProjectOrdered(project)) return false;
             CreateDoneProject(architects, project);
-            if (IsProjectOrdered(project)) return;
             UpdateProject(projects, project.Id);
             UpdateOuterProjects(project.Id);
             UpdateSupervision(project, architects);
             projects.RemoveAll(p => p.Id == project.Id);
+            return true;
         }
 
         private void UpdateSupervision(Project project, List<Architect> architects)
         {
             var supervision = _supervisionHandler.GetOneById(project.Id);
             if (supervision == null) return;
-            _numberOfCurrentSupervisions++;
             UpdateSupervisionDates(supervision, project.EndDate);
             AssignSupervisor(project, supervision, architects);
         }
@@ -154,7 +152,8 @@ namespace ArchitecturalStudio.handlers
 
         private void CreateDoneProject(List<Architect> architects, Project project)
         {
-            for (var i = 0; i < GetArchitectsOnProject(architects); i++)
+            var architectsOnProject = GetArchitectsOnProject(architects);
+            for (var i = 0; i < architectsOnProject; i++)
             {
                 DoneProjects.Add(new DoneProject
                 {
@@ -176,15 +175,15 @@ namespace ArchitecturalStudio.handlers
 
         private int GetArchitectsOnProject(ICollection architects)
         {
-            return _random.Next(1, Math.Min(4, architects.Count));
+            return _random.Next(1, Math.Min(4, architects.Count+1));
         }
 
         private void UpdateProject(List<Project> projects, int id)
         {
             var index = projects.FindIndex(p => p.Id == id);
             projects[index].StartDate = CurrentDate;
-            projects[index].EndDate = CurrentDate.AddDays(_random.Next(10, 20));
-            projects[index].Update(_numberOfCurrentSupervisions);
+            projects[index].EndDate = projects[index].StartDate.AddDays(_random.Next(10, 20));
+            projects[index].Update(_supervisionHandler.CountActive());
         }
 
         private bool IsProjectOrdered(Project project)
